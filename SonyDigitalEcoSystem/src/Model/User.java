@@ -10,4 +10,32 @@ package Model;
  */
 public class User {
     
+    String username; 
+    String password;
+    String roleName;
+    String displayName;
+    
+    public User(String username, String password, String roleName, String displayName) {
+        this.username = username; 
+        this.password = password;
+        this.roleName = roleName;
+        this.displayName = displayName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+    
 }
