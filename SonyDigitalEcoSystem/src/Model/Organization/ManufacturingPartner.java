@@ -8,6 +8,10 @@ package Model.Organization;
  *
  * @author Hyungs
  */
-public class ManufacturingPartner {
+public class ManufacturingPartner extends Organization {
     
+    //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
+    public ManufacturingPartner () {
+        super("Manufacturing Partner", "Hardware and SupplyChain", "Production Manager");
+    }
 }

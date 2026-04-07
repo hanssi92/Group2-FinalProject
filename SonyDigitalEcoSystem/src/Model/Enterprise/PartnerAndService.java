@@ -8,6 +8,8 @@ package Model.Enterprise;
  *
  * @author Hyungs
  */
-public class PartnerAndService {
-    
+public class PartnerAndService extends Enterprise {
+    public PartnerAndService() {
+        super("Partner and Service Enterprise");
+    }
 }

@@ -8,6 +8,10 @@ package Model.Organization;
  *
  * @author Hyungs
  */
-public class Retailer {
+public class Retailer extends Organization {
     
+    //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
+    public Retailer() {
+        super("Retailer", "Partner and Service", "Retail Manger");
+    }
 }
