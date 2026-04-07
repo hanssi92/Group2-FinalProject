@@ -9,7 +9,7 @@ import Model.Order;
 import Model.Roles.ProductionManager;
 import Model.Roles.RetailManager;
 import Model.Roles.Supplier;
-import Network.SonyEcoSystem;
+import Model.Network.SonyEcoSystem;
 import java.lang.reflect.Method;
 import java.util.Random;
 
