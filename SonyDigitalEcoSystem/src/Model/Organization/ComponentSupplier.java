@@ -8,6 +8,10 @@ package Model.Organization;
  *
  * @author Hyungs
  */
-public class ComponentSupplier {
+public class ComponentSupplier extends Organization {
     
+    //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
+    public ComponentSupplier() {
+        super("Component Supplier Organization", "Hardware and SupplyChain", "Supplier");
+    }
 }

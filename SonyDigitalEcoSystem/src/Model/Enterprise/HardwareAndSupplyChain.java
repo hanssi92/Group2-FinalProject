@@ -8,6 +8,8 @@ package Model.Enterprise;
  *
  * @author Hyungs
  */
-public class HardwareAndSupplyChain {
-    
+public class HardwareAndSupplyChain extends Enterprise {
+    public HardwareAndSupplyChain(){
+        super("Hardware and SupplyChain Enterprise");
+    }
 }

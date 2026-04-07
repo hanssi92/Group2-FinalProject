@@ -4,8 +4,10 @@
  */
 package Model.Network;
 
+import Model.Enterprise.Enterprise;
 import Model.InventoryItem;
 import Model.Order;
+import Model.Organization.Organization;
 import Model.User;
 import java.util.ArrayList;
 
@@ -15,24 +17,36 @@ import java.util.ArrayList;
  */
 public class SonyEcoSystem {
     
-    private ArrayList<User> users;
+    private ArrayList<Enterprise> enterpriseList;
+    private ArrayList<Organization> organizationList;
+    private ArrayList<User> userList;
     private ArrayList<InventoryItem> supplierInventory;
     private ArrayList<InventoryItem> retailInventory;
-    private ArrayList<Order> supplyRequests;
-    private ArrayList<Order> productionOrders;
-    private ArrayList<Order> restockRequests;
-    
+    private ArrayList<Order> supplyRequestList;
+    private ArrayList<Order> productionOrderList;
+    private ArrayList<Order> restockRequestList;
+
     public SonyEcoSystem() {
-        this.users = new ArrayList<>();
-        this.supplierInventory = new ArrayList<>();
-        this.retailInventory = new ArrayList<>();
-        this.supplyRequests = new ArrayList<>();
-        this.productionOrders = new ArrayList<>();
-        this.restockRequests = new ArrayList<>();
+        enterpriseList = new ArrayList<>();
+        organizationList = new ArrayList<>();
+        userList = new ArrayList<>();
+        supplierInventory = new ArrayList<>();
+        retailInventory = new ArrayList<>();
+        supplyRequestList = new ArrayList<>();
+        productionOrderList = new ArrayList<>();
+        restockRequestList = new ArrayList<>();
     }
 
-    public ArrayList<User> getUsers() {
-        return users;
+    public ArrayList<Enterprise> getEnterpriseList() {
+        return enterpriseList;
+    }
+
+    public ArrayList<Organization> getOrganizationList() {
+        return organizationList;
+    }
+
+    public ArrayList<User> getUserList() {
+        return userList;
     }
 
     public ArrayList<InventoryItem> getSupplierInventory() {
@@ -43,20 +57,38 @@ public class SonyEcoSystem {
         return retailInventory;
     }
 
-    public ArrayList<Order> getSupplyRequests() {
-        return supplyRequests;
+    public ArrayList<Order> getSupplyRequestList() {
+        return supplyRequestList;
     }
 
-    public ArrayList<Order> getProductionOrders() {
-        return productionOrders;
+    public ArrayList<Order> getProductionOrderList() {
+        return productionOrderList;
     }
 
-    public ArrayList<Order> getRestockRequests() {
-        return restockRequests;
+    public ArrayList<Order> getRestockRequestList() {
+        return restockRequestList;
+    }
+
+    public void addEnterprise(Enterprise enterprise) {
+        if (enterprise != null && !enterpriseList.contains(enterprise)) {
+            enterpriseList.add(enterprise);
+        }
+    }
+
+    public void addOrganization(Organization organization) {
+        if (organization != null && !organizationList.contains(organization)) {
+            organizationList.add(organization);
+        }
+    }
+
+    public void addUser(User user) {
+        if (user != null && !userList.contains(user)) {
+            userList.add(user);
+        }
     }
 
     public User authenticate(String username, String password) {
-        for (User user : users) {
+        for (User user : userList) {
             if (user.getUsername().equalsIgnoreCase(username)
                     && user.getPassword().equals(password)) {
                 return user;
@@ -65,4 +97,3 @@ public class SonyEcoSystem {
         return null;
     }
 }
-

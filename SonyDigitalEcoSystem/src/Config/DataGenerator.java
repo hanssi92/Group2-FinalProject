@@ -4,12 +4,19 @@
  */
 package Config;
 
+import Model.Enterprise.Enterprise;
+import Model.Enterprise.HardwareAndSupplyChain;
+import Model.Enterprise.PartnerAndService;
 import Model.InventoryItem;
 import Model.Order;
 import Model.Roles.ProductionManager;
 import Model.Roles.RetailManager;
 import Model.Roles.Supplier;
 import Model.Network.SonyEcoSystem;
+import Model.Organization.ComponentSupplier;
+import Model.Organization.ManufacturingPartner;
+import Model.Organization.Organization;
+import Model.Organization.Retailer;
 import java.lang.reflect.Method;
 import java.util.Random;
 
@@ -26,13 +33,25 @@ public class DataGenerator {
     public DataGenerator() {
         this.random = new Random();
     }
-    
+   
     public SonyEcoSystem generateSystem() {
         SonyEcoSystem system = new SonyEcoSystem();
-        
-        system.getUsers().add(new Supplier("supplier", "supplier123", "Alex Supplier"));
-        system.getUsers().add(new ProductionManager("production", "production123", "Morgan Production"));
-        system.getUsers().add(new RetailManager("retail", "retail123", "Taylor Retail"));
+
+        HardwareAndSupplyChain hardwareEnterprise = new HardwareAndSupplyChain();
+        PartnerAndService partnerEnterprise = new PartnerAndService();
+
+        ComponentSupplier componentSupplier = new ComponentSupplier();
+        ManufacturingPartner manufacturingPartner = new ManufacturingPartner();
+        Retailer retailer = new Retailer();
+
+        //Enterprise registration to organization
+        registerOrganization(system, hardwareEnterprise, componentSupplier);
+        registerOrganization(system, hardwareEnterprise, manufacturingPartner);
+        registerOrganization(system, partnerEnterprise, retailer);
+
+        addUserToSystem(system, componentSupplier, new Supplier("supplier", "supplier123", "Alex Supplier"));
+        addUserToSystem(system, manufacturingPartner, new ProductionManager("production", "production123", "Morgan Production"));
+        addUserToSystem(system, retailer, new RetailManager("retail", "retail123", "Taylor Retail"));
 
         for (int i = 0; i < 6; i++) {
             system.getSupplierInventory().add(new InventoryItem(
@@ -56,8 +75,8 @@ public class DataGenerator {
             system.getSupplyRequests().add(new Order(
                     "SR-" + (1000 + i),
                     "Supply " + fakeProduct("component"),
-                    "ComponentSupplier",
-                    "ManufacturingPartner",
+                    componentSupplier.getName(),
+                    manufacturingPartner.getName(),
                     i == 0 ? "Approved" : (i == 1 ? "Rejected" : "Pending"),
                     fakePhrase("component")
             ));
@@ -67,8 +86,8 @@ public class DataGenerator {
             system.getProductionOrders().add(new Order(
                     "PO-" + (2000 + i),
                     "Build " + fakeProduct("console"),
-                    "GameDevStudio",
-                    "ManufacturingPartner",
+                    "Game Development Studio Organization",
+                    manufacturingPartner.getName(),
                     i % 2 == 0 ? "In Progress" : "Planned",
                     fakePhrase("production")
             ));
@@ -78,14 +97,24 @@ public class DataGenerator {
             system.getRestockRequests().add(new Order(
                     "RR-" + (3000 + i),
                     "Restock " + fakeProduct("retail"),
-                    "Retailer",
-                    "ManufacturingPartner",
+                    retailer.getName(),
+                    manufacturingPartner.getName(),
                     i == 0 ? "Pending" : "New",
                     fakePhrase("restock")
             ));
         }
 
         return system;
+    }
+
+    private void addUserToSystem(SonyEcoSystem system, Organization organization, Model.User user) {
+        system.registerUser(user, organization);
+    }
+
+    private void registerOrganization(SonyEcoSystem system, Enterprise enterprise, Organization organization) {
+        enterprise.addOrganization(organization);
+        system.addOrganization(organization);
+        system.addEnterprise(enterprise);
     }
 
     private int randomBetween(int min, int max) {
@@ -147,4 +176,3 @@ public class DataGenerator {
         }
     }
 }
-
