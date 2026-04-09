@@ -4,6 +4,8 @@
  */
 package Business.Organization;
 
+import Business.Role.ProductionManager;
+
 /**
  *
  * @author Hyungs
@@ -11,7 +13,9 @@ package Business.Organization;
 public class ManufacturingPartner extends Organization {
     
     //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
-    public ManufacturingPartner () {
-        super("Manufacturing Partner", "Hardware and SupplyChain", "Production Manager");
+    public ManufacturingPartner(String name) {
+        super(name, OrganizationType.MANUFACTURING_PARTNER);
+        addRole(new ProductionManager());
     }
 }
+

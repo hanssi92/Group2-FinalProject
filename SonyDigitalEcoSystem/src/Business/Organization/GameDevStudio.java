@@ -4,10 +4,18 @@
  */
 package Business.Organization;
 
+import Business.Role.GameDeveloper;
+
+
 /**
  *
  * @author Hyungs
  */
-public class GameDevStudio {
-    
+
+public class GameDevStudio extends Organization {
+
+    public GameDevStudio(String name) {
+        super(name, OrganizationType.GAME_DEV_STUDIO);
+        addRole(new GameDeveloper());
+    }
 }

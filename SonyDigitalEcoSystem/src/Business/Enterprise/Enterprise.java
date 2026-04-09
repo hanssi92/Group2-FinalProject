@@ -5,6 +5,8 @@
 package Business.Enterprise;
 
 import Business.Organization.Organization;
+import Business.Organization.OrganizationDirectory;
+import Business.Organization.OrganizationType;
 import java.util.ArrayList;
 
 /**
@@ -15,30 +17,57 @@ import java.util.ArrayList;
 //Note: used abstract because Enterprise and Organization are meant to be base templates, not direct objects.
 public abstract class Enterprise {
     
-    private String name;
-    private ArrayList<Organization> organizationList;
+    private final String name; 
+    private final EnterpriseType type;
+    private final OrganizationDirectory organizationDirectory;
     
-    public Enterprise(String name) {
+    protected Enterprise(String name, EnterpriseType type) {
         this.name = name;
-        this.organizationList = new ArrayList<>();
+        this.type = type;
+        this.organizationDirectory = new OrganizationDirectory();
     }
 
     public String getName() {
         return name;
     }
 
-    public ArrayList<Organization> getOrganizationList() {
-        return organizationList;
+    public EnterpriseType getType() {
+        return type;
     }
 
+    public OrganizationDirectory getOrganizationDirectory() {
+        return organizationDirectory;
+    }
+    
+    public ArrayList<Organization> getOrganization() {
+        return organizationDirectory.getOrganizationList();
+    }
+    
     public void addOrganization(Organization organization) {
-        if (organization != null && !organizationList.contains(organization)) {
-            organizationList.add(organization);
-        }
+        organizationDirectory.addOrganization(organization);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public boolean removeOrganization(Organization organization) {
+        return organizationDirectory.removeOrganization(organization);
+    }
+
+    public Organization findOrganizationByName(String organizationName) {
+        return organizationDirectory.findOrganizationByName(organizationName);
+    }
+
+    public Organization findOrganizationByType(OrganizationType organizationType) {
+        return organizationDirectory.findOrganizationByType(organizationType);
+    }
+
+    public boolean containsOrganizationType(OrganizationType organizationType) {
+        return findOrganizationByType(organizationType) != null;
+    }
+
+    public int getOrganizationCount() {
+        return organizationDirectory.getOrganizationList().size();
+    }
+
+    public String getSummary() {
+        return name + " (" + type + ") - organizations: " + organizationDirectory.getOrganizationList().size();
     }
 }

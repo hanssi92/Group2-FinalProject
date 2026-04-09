@@ -2,24 +2,22 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Business.Organization;
+package Business.Model;
 
 /**
  *
  * @author Hyungs
  */
+public enum ProductionOrderStatus {
     
-public enum OrganizationType {
-    INTERACTIVE_ENTERTAINMENT("Interactive Entertainment"),
-    GAME_DEV_STUDIO("Game Dev Studio"),
-    COMPONENT_SUPPLIER("Component Supplier"),
-    MANUFACTURING_PARTNER("Manufacturing Partner"),
-    RETAILER("Retailer"),
-    ONLINE_SERVICE_PROVIDER("Online Service Provider");
+    PLANNED("Planned"),
+    IN_PROGRESS("In Progress"),
+    QUALITY_CHECK("Quality Check"),
+    COMPLETED("Completed");
 
     private final String displayName;
 
-    OrganizationType(String displayName) {
+    ProductionOrderStatus(String displayName) {
         this.displayName = displayName;
     }
 
@@ -27,9 +25,12 @@ public enum OrganizationType {
         return displayName;
     }
 
+    public boolean isActive() {
+        return this == IN_PROGRESS || this == QUALITY_CHECK;
+    }
+
     @Override
     public String toString() {
         return displayName;
     }
 }
-

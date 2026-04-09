@@ -10,4 +10,9 @@ package Business.Role;
  */
 public class ContentManager {
     
+    public ContentManager() {
+        super(RoleType.CONTENT_MANAGER);
+    }
+    
 }
+

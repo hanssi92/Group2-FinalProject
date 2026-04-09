@@ -8,6 +8,6 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class Supplier {
+public class SupplierManager {
     
 }

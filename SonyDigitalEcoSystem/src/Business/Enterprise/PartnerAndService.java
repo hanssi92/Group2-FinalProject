@@ -9,7 +9,8 @@ package Business.Enterprise;
  * @author Hyungs
  */
 public class PartnerAndService extends Enterprise {
-    public PartnerAndService() {
-        super("Partner and Service Enterprise");
+    
+    public PartnerAndService(String name) {
+        super(name, EnterpriseType.PARTNER_AND_SERVICE);
     }
 }

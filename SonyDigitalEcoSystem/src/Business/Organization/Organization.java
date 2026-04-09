@@ -4,8 +4,13 @@
  */
 package Business.Organization;
 
-import Business.Model.User;
+import Business.Employee.EmployeeDirectory;
+import Business.Role.Role;
+import Business.Role.RoleType;
+import Business.UserAccount.UserAccountDirectory;
+import Business.WorkQueue.WorkRequest;
 import java.util.ArrayList;
+
 
 /**
  *
@@ -13,46 +18,106 @@ import java.util.ArrayList;
  */
 public abstract class Organization {
     
-    private String name;
-    private String enterpriseName;
-    private String supportedRoleName;
-    
-    private ArrayList<User> users;
+    private final String name;
+    private final OrganizationType type;
+    private final ArrayList<Role> supportedRoles;
+    private final ArrayList<WorkRequest> workQueue;
+    private final EmployeeDirectory employeeDirectory;
+    private final UserAccountDirectory userAccountDirectory;
+
     
     //protected organization is the constructor used by child classes when they inherit from Organization
-    protected Organization(String name, String enterpriseName, String supportedRoleName) {
+    protected Organization(String name, OrganizationType type) {
+        
         this.name = name;
-        this.enterpriseName = enterpriseName;
-        this.supportedRoleName = supportedRoleName;
-        this.users = new ArrayList<>();
+        this.type = type;
+        this.supportedRoles = new ArrayList<>();
+        this.workQueue = new ArrayList<>();
+        this.employeeDirectory = new EmployeeDirectory();
+        this.userAccountDirectory = new UserAccountDirectory();
     }
 
     public String getName() {
         return name;
     }
 
-    public String getEnterpriseName() {
-        return enterpriseName;
+    public OrganizationType getType() {
+        return type;
     }
 
-    public String getSupportedRoleName() {
-        return supportedRoleName;
+    public ArrayList<Role> getSupportedRoles() {
+        return supportedRoles;
     }
 
-    public boolean supportsRole(String roleName) {
-        return supportedRoleName != null && supportedRoleName.equalsIgnoreCase(roleName);
+    public EmployeeDirectory getEmployeeDirectory() {
+        return employeeDirectory;
     }
 
-    public ArrayList<User> getUsers() {
-        return users;
+    public UserAccountDirectory getUserAccountDirectory() {
+        return userAccountDirectory;
     }
 
-    public boolean addUser(User user) {
-        if (user != null && supportsRole(user.getRoleName()) && !users.contains(user)) {
-            users.add(user);
-            return true;
+    public void addRole(Role role) {
+        if (role != null && !supportsRoleType(role.getType())) {
+            supportedRoles.add(role);
+        }
+    }
+
+    public boolean removeRole(RoleType roleType) {
+        for (int i = 0; i < supportedRoles.size(); i++) {
+            if (supportedRoles.get(i).getType() == roleType) {
+                supportedRoles.remove(i);
+                return true;
+            }
         }
         return false;
     }
-}
 
+    public boolean supportsRoleType(RoleType roleType) {
+        for (Role role : supportedRoles) {
+            if (role.getType() == roleType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Role findRole(RoleType roleType) {
+        for (Role role : supportedRoles) {
+            if (role.getType() == roleType) {
+                return role;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<WorkRequest> getWorkQueue() {
+        return workQueue;
+    }
+
+    public void addWorkRequest(WorkRequest workRequest) {
+        if (workRequest != null) {
+            workQueue.add(workRequest);
+        }
+    }
+
+    public boolean removeWorkRequest(WorkRequest workRequest) {
+        return workQueue.remove(workRequest);
+    }
+
+    public int getWorkQueueSize() {
+        return workQueue.size();
+    }
+
+    public String getSummary() {
+        return name + " (" + type + ") - roles: " + supportedRoles.size()
+                + ", employees: " + employeeDirectory.getEmployeeList().size()
+                + ", userAccounts: " + userAccountDirectory.getUserAccountList().size()
+                + ", workRequests: " + workQueue.size();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+}

@@ -10,4 +10,34 @@ package Business.Model;
  */
 public class InventoryItem {
     
+    private final String itemName;
+    private final String category;
+    private int quantity;
+
+    public InventoryItem(String itemName, String category, int quantity) {
+        this.itemName = itemName;
+        this.category = category;
+        this.quantity = quantity;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void increaseQuantity(int amount) {
+        quantity += amount;
+    }
+
+    public void decreaseQuantity(int amount) {
+        quantity -= amount;
+    }
 }
+

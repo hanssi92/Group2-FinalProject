@@ -10,4 +10,21 @@ package Business.Employee;
  */
 public class Employee {
     
+    private static int counter = 1;
+    
+    private int employeeId;
+    private String name; 
+    
+    public Employee(String name) {
+        this.employeeId = counter++;
+        this.name = name;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
