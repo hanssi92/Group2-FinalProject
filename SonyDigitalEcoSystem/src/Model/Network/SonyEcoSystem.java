@@ -17,14 +17,14 @@ import java.util.ArrayList;
  */
 public class SonyEcoSystem {
     
-    private ArrayList<Enterprise> enterpriseList;
-    private ArrayList<Organization> organizationList;
-    private ArrayList<User> userList;
-    private ArrayList<InventoryItem> supplierInventory;
-    private ArrayList<InventoryItem> retailInventory;
-    private ArrayList<Order> supplyRequestList;
-    private ArrayList<Order> productionOrderList;
-    private ArrayList<Order> restockRequestList;
+    private final ArrayList<Enterprise> enterpriseList;
+    private final ArrayList<Organization> organizationList;
+    private final ArrayList<User> userList;
+    private final ArrayList<InventoryItem> supplierInventory;
+    private final ArrayList<InventoryItem> retailInventory;
+    private final ArrayList<Order> supplyRequestList;
+    private final ArrayList<Order> productionOrderList;
+    private final ArrayList<Order> restockRequestList;
 
     public SonyEcoSystem() {
         enterpriseList = new ArrayList<>();
