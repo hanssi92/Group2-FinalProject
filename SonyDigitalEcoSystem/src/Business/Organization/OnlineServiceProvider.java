@@ -4,10 +4,18 @@
  */
 package Business.Organization;
 
+import Business.Role.PartnerManager;
+import Business.Role.SupportAgent;
+
 /**
  *
  * @author Hyungs
  */
-public class OnlineServiceProvider {
-    
+public class OnlineServiceProvider extends Organization {
+
+    public OnlineServiceProvider(String name) {
+        super(name, OrganizationType.ONLINE_SERVICE_PROVIDER);
+        addRole(new SupportAgent());
+        addRole(new PartnerManager());
+    }
 }

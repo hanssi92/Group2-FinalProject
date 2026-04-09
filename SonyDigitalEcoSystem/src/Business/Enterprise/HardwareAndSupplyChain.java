@@ -9,7 +9,8 @@ package Business.Enterprise;
  * @author Hyungs
  */
 public class HardwareAndSupplyChain extends Enterprise {
-    public HardwareAndSupplyChain(){
-        super("Hardware and SupplyChain Enterprise");
+    
+    public HardwareAndSupplyChain(String name) {
+        super(name, EnterpriseType.HARDWARE_AND_SUPPLY_CHAIN);
     }
 }

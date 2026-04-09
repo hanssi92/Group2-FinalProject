@@ -4,10 +4,15 @@
  */
 package Business.Organization;
 
+
 /**
  *
  * @author Hyungs
  */
-public class InteractiveEntertainment {
-    
+public class InteractiveEntertainment extends Organization {
+
+    public InteractiveEntertainment(String name) {
+        super(name, OrganizationType.INTERACTIVE_ENTERTAINMENT);
+        addRole(ContentManager());
+    }
 }

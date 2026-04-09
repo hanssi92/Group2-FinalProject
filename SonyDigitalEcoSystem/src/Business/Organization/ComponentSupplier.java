@@ -4,6 +4,8 @@
  */
 package Business.Organization;
 
+import Business.Role.SupplierManager;
+
 /**
  *
  * @author Hyungs
@@ -12,6 +14,12 @@ public class ComponentSupplier extends Organization {
     
     //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
     public ComponentSupplier() {
-        super("Component Supplier Organization", "Hardware and SupplyChain", "Supplier");
+        this("Component Supplier Organization");
+    }
+
+    public ComponentSupplier(String name) {
+        super(name, OrganizationType.COMPONENT_SUPPLIER);
+        addRole(new SupplierManager());
     }
 }
+

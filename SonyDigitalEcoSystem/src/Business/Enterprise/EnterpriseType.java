@@ -2,24 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Business.Organization;
+package Business.Enterprise;
 
 /**
  *
  * @author Hyungs
  */
-    
-public enum OrganizationType {
-    INTERACTIVE_ENTERTAINMENT("Interactive Entertainment"),
-    GAME_DEV_STUDIO("Game Dev Studio"),
-    COMPONENT_SUPPLIER("Component Supplier"),
-    MANUFACTURING_PARTNER("Manufacturing Partner"),
-    RETAILER("Retailer"),
-    ONLINE_SERVICE_PROVIDER("Online Service Provider");
+public enum EnterpriseType {
+    DIGITAL_ENTERTAINMENT("Digital Entertainment"),
+    HARDWARE_AND_SUPPLY_CHAIN("Hardware and Supply Chain"),
+    PARTNER_AND_SERVICE("Partner and Service");
 
     private final String displayName;
 
-    OrganizationType(String displayName) {
+    EnterpriseType(String displayName) {
         this.displayName = displayName;
     }
 
@@ -32,4 +28,3 @@ public enum OrganizationType {
         return displayName;
     }
 }
-

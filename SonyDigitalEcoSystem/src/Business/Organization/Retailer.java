@@ -4,6 +4,8 @@
  */
 package Business.Organization;
 
+import Business.Role.RetailManager;
+
 /**
  *
  * @author Hyungs
@@ -11,7 +13,9 @@ package Business.Organization;
 public class Retailer extends Organization {
     
     //This constructor defines the organization name, its enterprise, and its supported role by passing the values to the parent Organization class.
-    public Retailer() {
-        super("Retailer", "Partner and Service", "Retail Manger");
+    public Retailer(String name) {
+        super(name, OrganizationType.RETAILER);
+        addRole(new RetailManager());
     }
 }
+

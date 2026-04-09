@@ -8,6 +8,9 @@ package Business.Enterprise;
  *
  * @author Hyungs
  */
-public class DigitalEntertainment {
+public class DigitalEntertainment extends Enterprise {
     
+    public DigitalEntertainment(String name) {
+        super(name, EnterpriseType.DIGITAL_ENTERTAINMENT);
+    }
 }
