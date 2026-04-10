@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class GameDeveloper {
+public class GameDeveloper extends Role {
     
+    public GameDeveloper() {
+        super(RoleType.GAME_DEVELOPER);
+    }
 }
+

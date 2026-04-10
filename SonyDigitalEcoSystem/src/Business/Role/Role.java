@@ -23,15 +23,4 @@ public abstract class Role {
     public String getDisplayName() {
         return type.getDisplayName();
     }
-
-    public abstract String getDashboardTitle();
-
-    public JPanel createWorkArea(SonyRoleWorkspace workspace) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(
-                new JLabel("No work area implemented for " + getDisplayName(), SwingConstants.CENTER),
-                BorderLayout.CENTER
-        );
-        return panel;
-    }
 }

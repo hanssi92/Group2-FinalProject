@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class RetailManager {
+public class RetailManager extends Role{
+    
+    public RetailManager () {
+        super(RoleType.RETAIL_MANAGER);
+    }
     
 }

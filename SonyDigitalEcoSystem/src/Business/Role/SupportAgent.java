@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class SupportAgent {
+public class SupportAgent extends Role {
+    
+    public SupportAgent() {
+        super(RoleType.SUPPORT_AGENT);
+    }
     
 }

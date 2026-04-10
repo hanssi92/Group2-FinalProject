@@ -7,10 +7,15 @@ package Business;
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
 import Business.Model.InventoryItem;
+import Business.Model.PerformanceRecord;
+import Business.Model.ProductionOrder;
+import Business.Model.ProductionOrderStatus;
 import Business.Organization.Organization;
 import Business.Organization.OrganizationType;
+import Business.Role.RoleType;
 import Business.UserAccount.UserAccountDirectory;
 import Business.WorkQueue.ComponentSupplyRequest;
+import Business.WorkQueue.RetailRestockRequest;
 import Business.WorkQueue.WorkRequest;
 import Business.WorkQueue.WorkRequestStatus;
 import Business.WorkSpace.SonyRoleWorkspace;
@@ -210,7 +215,7 @@ public class DataGenerator {
     }
 
     private static Organization findOrganization(SonyEcoSystem ecosystem, OrganizationType organizationType) {
-        for (Enterprise enterprise : ecosystem.getEnterprises()) {
+        for (Enterprise enterprise : ecosystem.getEnterpriseList()) {
             Organization organization = enterprise.findOrganizationByType(organizationType);
             if (organization != null) {
                 return organization;

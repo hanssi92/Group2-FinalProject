@@ -4,10 +4,20 @@
  */
 package Business.WorkQueue;
 
+import Business.Organization.Organization;
+
 /**
  *
  * @author Hyungs
  */
-public class CustomerSupportEscalationRequest {
+public class CustomerSupportEscalationRequest extends WorkRequest {
     
+    public CustomerSupportEscalationRequest() {
+        super();
+    }
+
+    public CustomerSupportEscalationRequest(String title, Organization senderOrganization, Organization receiverOrganization, String message) {
+        super(title, senderOrganization, receiverOrganization, message);
+    }
 }
+

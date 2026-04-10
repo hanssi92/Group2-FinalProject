@@ -4,11 +4,21 @@
  */
 package Business;
 
+import Business.Enterprise.DigitalEntertainment;
 import Business.Enterprise.Enterprise;
+import Business.Enterprise.HardwareAndSupplyChain;
+import Business.Enterprise.PartnerAndService;
 import Business.Model.InventoryItem;
 import Business.Model.Order;
 import Business.Organization.Organization;
 import Business.Model.User;
+import Business.Organization.ComponentSupplier;
+import Business.Organization.GameDevStudio;
+import Business.Organization.InteractiveEntertainment;
+import Business.Organization.ManufacturingPartner;
+import Business.Organization.OnlineServiceProvider;
+import Business.Organization.Retailer;
+import Business.WorkQueue.WorkRequest;
 import java.util.ArrayList;
 
 /**
@@ -25,6 +35,7 @@ public class SonyEcoSystem {
     private final ArrayList<Order> supplyRequestList;
     private final ArrayList<Order> productionOrderList;
     private final ArrayList<Order> restockRequestList;
+    private final ArrayList<WorkRequest> workRequestList;
 
     public SonyEcoSystem() {
         enterpriseList = new ArrayList<>();
@@ -35,9 +46,14 @@ public class SonyEcoSystem {
         supplyRequestList = new ArrayList<>();
         productionOrderList = new ArrayList<>();
         restockRequestList = new ArrayList<>();
+        workRequestList = new ArrayList<>();
     }
 
     public ArrayList<Enterprise> getEnterpriseList() {
+        return enterpriseList;
+    }
+
+    public ArrayList<Enterprise> getEnterprises() {
         return enterpriseList;
     }
 
@@ -69,6 +85,18 @@ public class SonyEcoSystem {
         return restockRequestList;
     }
 
+    public ArrayList<WorkRequest> getWorkRequests() {
+        return workRequestList;
+    }
+
+    public ArrayList<WorkRequest> getWorkRequestList() {
+        return workRequestList;
+    }
+
+    public ArrayList<WorkRequest> getWorkRequest() {
+        return workRequestList;
+    }
+
     public void addEnterprise(Enterprise enterprise) {
         if (enterprise != null && !enterpriseList.contains(enterprise)) {
             enterpriseList.add(enterprise);
@@ -87,6 +115,12 @@ public class SonyEcoSystem {
         }
     }
 
+    public void addWorkRequest(WorkRequest workRequest) {
+        if (workRequest != null && !workRequestList.contains(workRequest)) {
+            workRequestList.add(workRequest);
+        }
+    }
+
     public User authenticate(String username, String password) {
         for (User user : userList) {
             if (user.getUsername().equalsIgnoreCase(username)
@@ -95,5 +129,40 @@ public class SonyEcoSystem {
             }
         }
         return null;
+    }
+
+    public static SonyEcoSystem createDefaultEcosystem() {
+        SonyEcoSystem ecosystem = new SonyEcoSystem();
+
+        Enterprise digitalEntertainment = new DigitalEntertainment("Digital Entertainment Enterprise");
+        Enterprise hardwareAndSupplyChain = new HardwareAndSupplyChain("Hardware and Supply Chain Enterprise");
+        Enterprise partnerAndService = new PartnerAndService("Partner and Service Enterprise");
+
+        Organization interactiveEntertainment = new InteractiveEntertainment("Interactive Entertainment Organization");
+        Organization gameDevStudio = new GameDevStudio("Game Development Studio Organization");
+        Organization componentSupplier = new ComponentSupplier("Component Supplier Organization");
+        Organization manufacturingPartner = new ManufacturingPartner("Manufacturing Partner Organization");
+        Organization retailer = new Retailer("Retailer Organization");
+        Organization onlineServiceProvider = new OnlineServiceProvider("Online Service Provider Organization");
+
+        digitalEntertainment.addOrganization(interactiveEntertainment);
+        digitalEntertainment.addOrganization(gameDevStudio);
+        hardwareAndSupplyChain.addOrganization(componentSupplier);
+        hardwareAndSupplyChain.addOrganization(manufacturingPartner);
+        partnerAndService.addOrganization(retailer);
+        partnerAndService.addOrganization(onlineServiceProvider);
+
+        ecosystem.addEnterprise(digitalEntertainment);
+        ecosystem.addEnterprise(hardwareAndSupplyChain);
+        ecosystem.addEnterprise(partnerAndService);
+
+        ecosystem.addOrganization(interactiveEntertainment);
+        ecosystem.addOrganization(gameDevStudio);
+        ecosystem.addOrganization(componentSupplier);
+        ecosystem.addOrganization(manufacturingPartner);
+        ecosystem.addOrganization(retailer);
+        ecosystem.addOrganization(onlineServiceProvider);
+
+        return ecosystem;
     }
 }

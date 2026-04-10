@@ -13,6 +13,10 @@ import Business.Role.SupportAgent;
  */
 public class OnlineServiceProvider extends Organization {
 
+    public OnlineServiceProvider() {
+        this("Online Service Provider Organization");
+    }
+
     public OnlineServiceProvider(String name) {
         super(name, OrganizationType.ONLINE_SERVICE_PROVIDER);
         addRole(new SupportAgent());

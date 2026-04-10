@@ -4,10 +4,19 @@
  */
 package Business.WorkQueue;
 
+import Business.Organization.Organization;
+
 /**
  *
  * @author Hyungs
  */
-public class DigitalPromotionRequest {
+public class DigitalPromotionRequest extends WorkRequest {
     
+    public DigitalPromotionRequest () {
+        super();
+    }
+
+    public DigitalPromotionRequest (String title, Organization senderOrganization, Organization receiverOrganization, String message) {
+        super(title, senderOrganization, receiverOrganization, message);
+    }
 }
