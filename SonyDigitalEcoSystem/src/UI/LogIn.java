@@ -4,17 +4,45 @@
  */
 package UI;
 
+import Business.Role.RoleType;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import UI.WorkAreas.ContentManagerWorkAreaJPanel;
+import UI.WorkAreas.DeveloperWorkAreaJPanel;
+import UI.WorkAreas.PartnerManagerWorkAreaJPanel;
+import UI.WorkAreas.PlayerWorkAreaJPanel;
+import UI.WorkAreas.ProductionWorkAreaJPanel;
+import UI.WorkAreas.RetailWorkAreaJPanel;
+import UI.WorkAreas.SupplierWorkAreaJPanel;
+import UI.WorkAreas.SupportAgentWorkAreaJPanel;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class LogIn extends javax.swing.JPanel {
+    
+    private final MainFrame mainFrame;
+    private final SonyEcoSystem ecosystem;
+    
 
     /**
      * Creates new form LogIn
      */
-    public LogIn() {
+    
+    public LogIn(MainFrame mainFrame,SonyEcoSystem ecosystem) {
+        this.mainFrame = mainFrame;
+        this.ecosystem = ecosystem;
         initComponents();
+        initializeLoginBehavior();
     }
 
     /**
@@ -26,10 +54,262 @@ public class LogIn extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.BorderLayout());
+        LoginPanel = new javax.swing.JPanel();
+        lblTitle = new javax.swing.JLabel();
+        lblUserName = new javax.swing.JLabel();
+        lblPassword = new javax.swing.JLabel();
+        lblRole = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        cmbRole = new javax.swing.JComboBox<>();
+        btnLogin = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
+
+        setBackground(new java.awt.Color(204, 204, 204));
+        setLayout(new java.awt.GridBagLayout());
+
+        LoginPanel.setBackground(new java.awt.Color(255, 255, 255));
+        LoginPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        lblTitle.setFont(new java.awt.Font("맑은 고딕", 1, 24)); // NOI18N
+        lblTitle.setText("Sony Digital Ecosystem - Login");
+
+        lblUserName.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
+        lblUserName.setText("Username:");
+
+        lblPassword.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
+        lblPassword.setText("Password:");
+
+        lblRole.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
+        lblRole.setText("Role:");
+
+        cmbRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbRoleActionPerformed(evt);
+            }
+        });
+
+        btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+
+        btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout LoginPanelLayout = new javax.swing.GroupLayout(LoginPanel);
+        LoginPanel.setLayout(LoginPanelLayout);
+        LoginPanelLayout.setHorizontalGroup(
+            LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoginPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(LoginPanelLayout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoginPanelLayout.createSequentialGroup()
+                        .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblUserName)
+                                .addComponent(lblPassword, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(lblRole, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtUsername)
+                            .addComponent(cmbRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(LoginPanelLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(43, 43, 43)
+                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        LoginPanelLayout.setVerticalGroup(
+            LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoginPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUserName)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
+                .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRole)
+                    .addComponent(cmbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(LoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLogin)
+                    .addComponent(btnClear))
+                .addContainerGap(54, Short.MAX_VALUE))
+        );
+
+        add(LoginPanel, new java.awt.GridBagConstraints());
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        // TODO add your handling code here:
+        handleLogin();
+    }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void cmbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbRoleActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_cmbRoleActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel LoginPanel;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnLogin;
+    private javax.swing.JComboBox<String> cmbRole;
+    private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblRole;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblUserName;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+        private void initializeLoginBehavior() {
+        populateRoles();
+        btnClear.addActionListener(evt -> clearForm());
+    }
+
+        private void populateRoles() {
+        cmbRole.removeAllItems();
+
+        if (ecosystem == null) {
+            return;
+        }
+
+        ArrayList<RoleType> availableRoleTypes = ecosystem.getAvailableRoleTypes();
+        for (RoleType availableRoleType : availableRoleTypes) {
+            cmbRole.addItem(availableRoleType.getDisplayName());
+        }
+    }
+
+        private void handleLogin() {
+        if (mainFrame == null || ecosystem == null) {
+            JOptionPane.showMessageDialog(this, "Login screen is not connected yet.");
+            return;
+        }
+
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
+        String selectedRoleName = (String) cmbRole.getSelectedItem();
+
+        if (username.isEmpty() || password.isEmpty() || selectedRoleName == null || selectedRoleName.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Enter username, password, and role.");
+            return;
+        }
+
+        RoleType selectedRole = findRoleTypeByDisplayName(selectedRoleName);
+        if (selectedRole == null) {
+            JOptionPane.showMessageDialog(this, "Selected role is not valid.");
+            return;
+        }
+
+        UserAccount account = ecosystem.authenticateUserAccount(username, password, selectedRole);
+        if (account == null) {
+            JOptionPane.showMessageDialog(this, "Invalid credentials");
+            return;
+        }
+
+        mainFrame.showPanel(createRoleDashboard(account));
+    }
+
+        private RoleType findRoleTypeByDisplayName(String displayName) {
+        for (RoleType roleType : RoleType.values()) {
+            if (roleType.getDisplayName().equalsIgnoreCase(displayName)) {
+                return roleType;
+            }
+        }
+        return null;
+    }
+
+        private void clearForm() {
+        txtUsername.setText("");
+        txtPassword.setText("");
+        if (cmbRole.getItemCount() > 0) {
+            cmbRole.setSelectedIndex(0);
+        }
+        txtUsername.requestFocusInWindow();
+    }
+
+        private JPanel createRoleDashboard(UserAccount account) {
+        JPanel container = new JPanel(new BorderLayout());
+
+        String employeeName = account.getEmployee() != null
+                ? account.getEmployee().getName()
+                : account.getUsername();
+
+        JLabel titleLabel = new JLabel(
+                account.getRoleType().getDisplayName() + " Dashboard - Welcome, " + employeeName,
+                SwingConstants.CENTER
+        );
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 16, 20, 16));
+
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(evt -> mainFrame.showLoginScreen());
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        headerPanel.add(logoutButton, BorderLayout.EAST);
+
+        container.add(headerPanel, BorderLayout.NORTH);
+        container.add(createWorkAreaPanel(account.getRoleType()), BorderLayout.CENTER);
+        return container;
+    }
+
+        private JPanel createWorkAreaPanel(RoleType roleType) {
+        switch (roleType) {
+            case CONTENT_MANAGER:
+                return new ContentManagerWorkAreaJPanel();
+            case PLAYER_OR_USER:
+                return new PlayerWorkAreaJPanel();
+            case GAME_DEVELOPER:
+                return new DeveloperWorkAreaJPanel();
+            case SUPPLIER_MANAGER:
+                return new SupplierWorkAreaJPanel();
+            case PRODUCTION_MANAGER:
+                return new ProductionWorkAreaJPanel();
+            case RETAIL_MANAGER:
+                return new RetailWorkAreaJPanel();
+            case SUPPORT_AGENT:
+                return new SupportAgentWorkAreaJPanel();
+            case PARTNER_MANAGER:
+                return new PartnerManagerWorkAreaJPanel();
+            default:
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.add(new JLabel("No work area available for this role.", SwingConstants.CENTER), BorderLayout.CENTER);
+                return panel;
+        }
+    }
 }

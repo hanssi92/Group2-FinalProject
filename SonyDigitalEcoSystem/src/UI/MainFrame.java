@@ -4,6 +4,8 @@
  */
 package UI;
 
+import java.awt.BorderLayout;
+
 /**
  *
  * @author sumayyahhusain
@@ -15,6 +17,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        showLoginPanel();
     }
 
     /**
@@ -28,94 +31,56 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         actionJPanel = new javax.swing.JPanel();
-        txtUserName = new javax.swing.JTextField();
-        txtPassword = new javax.swing.JTextField();
-        btnLogin = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
-        lblUserName = new javax.swing.JLabel();
-        lblPassword = new javax.swing.JLabel();
         cardSequencePanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        actionJPanel.setBackground(new java.awt.Color(102, 204, 255));
-        actionJPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        actionJPanel.setMinimumSize(new java.awt.Dimension(140, 190));
-
-        txtPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPasswordActionPerformed(evt);
-            }
-        });
-
-        btnLogin.setText("Login");
-
-        btnLogout.setText("Logout");
-
-        lblUserName.setText("Username:");
-
-        lblPassword.setText("Password");
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         javax.swing.GroupLayout actionJPanelLayout = new javax.swing.GroupLayout(actionJPanel);
         actionJPanel.setLayout(actionJPanelLayout);
         actionJPanelLayout.setHorizontalGroup(
             actionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(actionJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(actionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtUserName)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
-                    .addGroup(actionJPanelLayout.createSequentialGroup()
-                        .addGroup(actionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnLogin)
-                            .addComponent(btnLogout)
-                            .addComponent(lblUserName)
-                            .addComponent(lblPassword))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addGap(0, 815, Short.MAX_VALUE)
         );
         actionJPanelLayout.setVerticalGroup(
             actionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(actionJPanelLayout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(lblUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(lblPassword)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnLogin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnLogout)
-                .addContainerGap(333, Short.MAX_VALUE))
+            .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setLeftComponent(actionJPanel);
+        jSplitPane1.setTopComponent(actionJPanel);
 
         javax.swing.GroupLayout cardSequencePanelLayout = new javax.swing.GroupLayout(cardSequencePanel);
         cardSequencePanel.setLayout(cardSequencePanelLayout);
         cardSequencePanelLayout.setHorizontalGroup(
             cardSequencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 670, Short.MAX_VALUE)
+            .addGap(0, 815, Short.MAX_VALUE)
         );
         cardSequencePanelLayout.setVerticalGroup(
             cardSequencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 574, Short.MAX_VALUE)
+            .addGap(0, 469, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(cardSequencePanel);
 
-        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jSplitPane1, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPasswordActionPerformed
+    private void showLoginPanel() {
+        actionJPanel.setVisible(true);
+        jSplitPane1.setDividerSize(0);
+        jSplitPane1.setDividerLocation(0);
+        cardSequencePanel.removeAll();
+        cardSequencePanel.setLayout(new BorderLayout());
+        cardSequencePanel.add(new LogIn(this, ecosystem), BorderLayout.CENTER);
+        cardSequencePanel.revalidate();
+        cardSequencePanel.repaint();
 
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -153,13 +118,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel actionJPanel;
-    private javax.swing.JButton btnLogin;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JPanel cardSequencePanel;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JLabel lblPassword;
-    private javax.swing.JLabel lblUserName;
-    private javax.swing.JTextField txtPassword;
-    private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
+
+    
 }
