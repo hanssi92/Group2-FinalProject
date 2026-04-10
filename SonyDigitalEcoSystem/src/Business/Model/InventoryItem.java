@@ -10,8 +10,8 @@ package Business.Model;
  */
 public class InventoryItem {
     
-    private final String itemName;
-    private final String category;
+    private String itemName;
+    private String category;
     private int quantity;
 
     public InventoryItem(String itemName, String category, int quantity) {
@@ -24,20 +24,28 @@ public class InventoryItem {
         return itemName;
     }
 
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
     public String getCategory() {
         return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public void increaseQuantity(int amount) {
-        quantity += amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
-    public void decreaseQuantity(int amount) {
-        quantity -= amount;
+    @Override
+    public String toString() {
+        return itemName + " (" + quantity + ")";
     }
 }
-

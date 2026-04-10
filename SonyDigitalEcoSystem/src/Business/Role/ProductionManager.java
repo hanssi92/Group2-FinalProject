@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class ProductionManager {
+public class ProductionManager extends Role{
+    
+    public ProductionManager () {
+        super(RoleType.PRODUCTION_MANAGER);
+    }
     
 }

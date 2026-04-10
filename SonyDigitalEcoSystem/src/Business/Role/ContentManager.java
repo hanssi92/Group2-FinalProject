@@ -8,11 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class ContentManager {
+public class ContentManager extends Role {
     
     public ContentManager() {
         super(RoleType.CONTENT_MANAGER);
     }
-    
 }
 

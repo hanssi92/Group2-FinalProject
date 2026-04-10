@@ -10,13 +10,15 @@ import Business.Organization.Organization;
  *
  * @author Hyungs
  */
-public class ProductionOrderRequest extends WorkRequest {
+public class RetailRestockRequest extends WorkRequest {
     
-    public ProductionOrderRequest () {
+    public RetailRestockRequest() {
         super();
     }
 
-    public ProductionOrderRequest (String title, Organization senderOrganization, Organization receiverOrganization, String message) {
+    public RetailRestockRequest (String title, Organization senderOrganization, Organization receiverOrganization, String message) {
         super(title, senderOrganization, receiverOrganization, message);
     }
 }
+
+

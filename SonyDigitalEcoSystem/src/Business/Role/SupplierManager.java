@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class SupplierManager {
+public class SupplierManager extends Role {
     
+    public SupplierManager() {
+        super(RoleType.SUPPLIER_MANAGER);
+    }
 }
+

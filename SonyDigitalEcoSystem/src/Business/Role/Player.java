@@ -8,6 +8,10 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class Player {
+public class Player extends Role {
+    
+    public Player() {
+        super(RoleType.PLAYER_OR_USER);
+    }
     
 }

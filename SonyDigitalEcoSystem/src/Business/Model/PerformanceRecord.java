@@ -10,19 +10,18 @@ package Business.Model;
  */
 public class PerformanceRecord {
     
-    private final String productName;
+    private final String itemName;
     private final int unitsSold;
     private final double revenue;
 
-    public PerformanceRecord(String productName, int unitsSold, double revenue) {
-        
-        this.productName = productName;
+    public PerformanceRecord(String itemName, int unitsSold, double revenue) {
+        this.itemName = itemName;
         this.unitsSold = unitsSold;
         this.revenue = revenue;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getItemName() {
+        return itemName;
     }
 
     public int getUnitsSold() {
@@ -33,4 +32,3 @@ public class PerformanceRecord {
         return revenue;
     }
 }
-

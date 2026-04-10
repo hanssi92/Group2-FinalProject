@@ -4,6 +4,9 @@
  */
 package Business.Organization;
 
+import Business.Role.ContentManager;
+import Business.Role.Player;
+
 
 /**
  *
@@ -11,8 +14,13 @@ package Business.Organization;
  */
 public class InteractiveEntertainment extends Organization {
 
+    public InteractiveEntertainment() {
+        this("Interactive Entertainment Organization");
+    }
+
     public InteractiveEntertainment(String name) {
         super(name, OrganizationType.INTERACTIVE_ENTERTAINMENT);
-        addRole(ContentManager());
+        addRole(new ContentManager());
+        addRole(new Player());
     }
 }

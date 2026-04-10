@@ -8,6 +8,10 @@ package Business.WorkQueue;
  *
  * @author Hyungs
  */
-public class WorkRequestStatus {
-    
+public enum WorkRequestStatus {
+    NEW,
+    PENDING,
+    APPROVED,
+    REJECTED,
+    COMPLETED
 }

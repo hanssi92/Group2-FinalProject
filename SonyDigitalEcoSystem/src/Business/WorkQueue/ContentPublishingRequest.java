@@ -4,10 +4,19 @@
  */
 package Business.WorkQueue;
 
+import Business.Organization.Organization;
+
 /**
  *
  * @author Hyungs
  */
-public class ContentPublishingRequest {
+public class ContentPublishingRequest extends WorkRequest {
     
+    public ContentPublishingRequest() {
+        super();
+    }
+
+    public ContentPublishingRequest(String title, Organization senderOrganization, Organization receiverOrganization, String message) {
+        initialize(title, senderOrganization, receiverOrganization, message);
+    }
 }

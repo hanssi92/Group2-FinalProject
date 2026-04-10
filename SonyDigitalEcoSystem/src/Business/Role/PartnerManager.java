@@ -8,6 +8,9 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class PartnerManager {
+public class PartnerManager extends Role {
     
+    public PartnerManager() {
+        super(RoleType.PARTNER_MANAGER);
+    }
 }

@@ -14,6 +14,10 @@ import Business.Role.GameDeveloper;
 
 public class GameDevStudio extends Organization {
 
+    public GameDevStudio() {
+        this("Game Development Studio Organization");
+    }
+
     public GameDevStudio(String name) {
         super(name, OrganizationType.GAME_DEV_STUDIO);
         addRole(new GameDeveloper());

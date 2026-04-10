@@ -4,10 +4,21 @@
  */
 package Business.WorkQueue;
 
+import Business.Organization.Organization;
+
 /**
  *
  * @author Hyungs
  */
-public class ComponentSupplyRequest {
+public class ComponentSupplyRequest extends WorkRequest {
     
+    public ComponentSupplyRequest() {
+        super();
+    }
+
+    public ComponentSupplyRequest(String title, Organization senderOrganization, Organization receiverOrganization, String message) {
+        super();
+        initialize(title, senderOrganization, receiverOrganization, message);
+    }
 }
+

@@ -4,10 +4,28 @@
  */
 package Business.Service;
 
+import Business.Model.ProductionOrder;
+import java.util.ArrayList;
+
 /**
  *
  * @author Hyungs
  */
 public class ProductionManagerService {
     
+    private final ArrayList<ProductionOrder> productionOrders;
+
+    public ProductionManagerService() {
+        this.productionOrders = new ArrayList<>();
+    }
+
+    public void addProductionOrder(ProductionOrder productionOrder) {
+        if (productionOrder != null) {
+            productionOrders.add(productionOrder);
+        }
+    }
+
+    public ArrayList<ProductionOrder> getProductionOrders() {
+        return productionOrders;
+    }
 }
