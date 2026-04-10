@@ -18,8 +18,12 @@ import Business.Organization.InteractiveEntertainment;
 import Business.Organization.ManufacturingPartner;
 import Business.Organization.OnlineServiceProvider;
 import Business.Organization.Retailer;
+import Business.Role.Role;
+import Business.Role.RoleType;
+import Business.UserAccount.UserAccount;
 import Business.WorkQueue.WorkRequest;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -129,6 +133,38 @@ public class SonyEcoSystem {
             }
         }
         return null;
+    }
+
+    public UserAccount authenticateUserAccount(String username, String password, RoleType roleType) {
+        for (Enterprise enterprise : enterpriseList) {
+            for (Organization organization : enterprise.getOrganization()) {
+                for (UserAccount userAccount : organization.getUserAccountDirectory().getUserAccountList()) {
+                    if (userAccount.getUsername().equalsIgnoreCase(username)
+                            && userAccount.getPassword().equals(password)
+                            && userAccount.getRoleType() == roleType) {
+                        return userAccount;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<RoleType> getAvailableRoleTypes() {
+        LinkedHashSet<RoleType> roleTypes = new LinkedHashSet<>();
+
+        for (Enterprise enterprise : enterpriseList) {
+            for (Organization organization : enterprise.getOrganization()) {
+                for (Role role : organization.getSupportedRoles()) {
+                    roleTypes.add(role.getType());
+                }
+                for (UserAccount userAccount : organization.getUserAccountDirectory().getUserAccountList()) {
+                    roleTypes.add(userAccount.getRoleType());
+                }
+            }
+        }
+
+        return new ArrayList<>(roleTypes);
     }
 
     public static SonyEcoSystem createDefaultEcosystem() {
