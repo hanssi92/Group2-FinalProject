@@ -93,7 +93,8 @@ public class DataGenerator {
         {OrganizationType.MANUFACTURING_PARTNER, RoleType.PRODUCTION_MANAGER, "production", "production123", "Lisa", "Production", "lisa.production@sony.com", "010-3100-1005", true},
         {OrganizationType.RETAILER, RoleType.RETAIL_MANAGER, "retail", "retail123", "Tom", "Retail", "tom.retail@sony.com", "010-3100-1006", true},
         {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.SUPPORT_AGENT, "support", "support123", "Emma", "Support", "emma.support@sony.com", "010-3100-1007", true},
-        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.PARTNER_MANAGER, "partner", "partner123", "Chris", "Partner", "chris.partner@sony.com", "010-3100-1008", true}
+        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.PARTNER_MANAGER, "partner", "partner123", "Chris", "Partner", "chris.partner@sony.com", "010-3100-1008", true},
+        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.SYSTEM_ADMIN, "admin", "admin123", "Ava", "Admin", "ava.admin@sony.com", "010-3100-1009", true}
     };
 
     private static final WorkRequestStatus[] ECOSYSTEM_REQUEST_STATUSES = {

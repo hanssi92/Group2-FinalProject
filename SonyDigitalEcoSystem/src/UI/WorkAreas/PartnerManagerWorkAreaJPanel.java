@@ -4,6 +4,7 @@
  */
 package UI.WorkAreas;
 
+import Business.WorkSpace.WorkRequestFormData;
 import Business.DataGenerator;
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
@@ -69,7 +70,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnUpdate1 = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         lblId = new javax.swing.JLabel();
@@ -94,20 +94,23 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         PartnerRequestTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         PartnerRequestTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        lblActivityPartner.setBackground(new java.awt.Color(204, 204, 204));
         lblActivityPartner.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
         lblActivityPartner.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblActivityPartner.setText("Active Partners:");
         lblActivityPartner.setToolTipText("");
         lblActivityPartner.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        lblPendingAssign.setBackground(new java.awt.Color(204, 204, 204));
         lblPendingAssign.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
         lblPendingAssign.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblPendingAssign.setText("Pending Agreements:");
         lblPendingAssign.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        lblCrossRequest.setBackground(new java.awt.Color(204, 204, 204));
         lblCrossRequest.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
         lblCrossRequest.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCrossRequest.setText("Cross-Enterprise Requests:");
@@ -242,10 +245,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate1.setText("Update");
         btnUpdate1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         lblName.setText("Name:");
 
         lblId.setText("Employee ID");
@@ -265,38 +264,37 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(229, 229, 229)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(234, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(265, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lblRole, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(lblId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblOrganization)
-                            .addComponent(lblEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lblRole, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(lblId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lblName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lblOrganization)
+                                    .addComponent(lblEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(256, 256, 256))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(256, 256, 256))
+                        .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(283, 283, 283))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,12 +327,11 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPhone)
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
-                    .addComponent(btnUpdate1)
-                    .addComponent(btnLogout))
-                .addContainerGap(97, Short.MAX_VALUE))
+                    .addComponent(btnUpdate1))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         ProfileTab.addTab("My Information", jPanel3);
@@ -369,7 +366,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jButton3.addActionListener(evt -> updateSelectedPartnerStatus("Rejected"));
         btnUpdate1.addActionListener(evt -> enableProfileEditing());
         btnSave.addActionListener(evt -> saveProfileChanges());
-        btnLogout.addActionListener(evt -> logoutToLogin());
     }
 
     private void populateMyProfileTab() {
@@ -383,7 +379,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtId.setText(formatEmployeeId(employee));
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -430,6 +426,15 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         }
     }
 
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
+    }
+
     private void populatePartnerRequests() {
         DefaultTableModel model = (DefaultTableModel) tblWorkRequest.getModel();
         model.setRowCount(0);
@@ -447,7 +452,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Select a request first.");
             return;
         }
-        jTable1.setValueAt(status, selectedRow, 4);
+        tblWorkRequest.setValueAt(status, selectedRow, 4);
     }
 
     private void openCreateRequestForm() {
@@ -543,7 +548,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane PartnerRequestTab;
     private javax.swing.JTabbedPane ProfileTab;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate1;
     private javax.swing.JButton jButton1;

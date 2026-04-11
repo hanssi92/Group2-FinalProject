@@ -6,8 +6,13 @@ package UI;
 
 import Business.DataGenerator;
 import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
 import java.awt.BorderLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -98,6 +103,36 @@ public class MainFrame extends javax.swing.JFrame {
         cardSequencePanel.revalidate();
         cardSequencePanel.repaint();
         
+    }
+
+    public void showRoleDashboard(UserAccount account, JPanel workAreaPanel) {
+        if (account == null || workAreaPanel == null) {
+            showPanel(workAreaPanel);
+            return;
+        }
+
+        JPanel container = new JPanel(new BorderLayout());
+
+        String employeeName = account.getEmployee() != null
+                ? account.getEmployee().getName()
+                : account.getUsername();
+
+        JLabel titleLabel = new JLabel(
+                account.getRoleType().getDisplayName() + " Dashboard - Welcome, " + employeeName,
+                SwingConstants.CENTER
+        );
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 16, 20, 16));
+
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(evt -> showLoginScreen());
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        headerPanel.add(logoutButton, BorderLayout.EAST);
+
+        container.add(headerPanel, BorderLayout.NORTH);
+        container.add(workAreaPanel, BorderLayout.CENTER);
+        showPanel(container);
     }
     
     public void showLoginScreen() {

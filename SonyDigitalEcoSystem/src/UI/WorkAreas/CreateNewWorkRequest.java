@@ -4,17 +4,54 @@
  */
 package UI.WorkAreas;
 
+import Business.WorkSpace.WorkRequestFormData;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import UI.MainFrame;
+import java.util.function.Consumer;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 /**
  *
  * @author Hyungs
  */
 public class CreateNewWorkRequest extends javax.swing.JPanel {
+    
+    private final MainFrame mainFrame;
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+    private final JPanel returnPanel;
+    private final Consumer<WorkRequestFormData> submitHandler;
+    private final String defaultRequestType;
+    private final String requestIdPrefix;
+
 
     /**
      * Creates new form CreateNewWorkRequest
      */
     public CreateNewWorkRequest() {
+        this(null, null, null, null, null, "", "WR");
+    }
+
+    public CreateNewWorkRequest(MainFrame mainFrame,
+            SonyEcoSystem ecosystem,
+            UserAccount account,
+            JPanel returnPanel,
+            Consumer<WorkRequestFormData> submitHandler,
+            String defaultRequestType,
+            String requestIdPrefix) {        
+        this.mainFrame = mainFrame;
+        this.ecosystem = ecosystem;
+        this.account = account;
+        this.returnPanel = returnPanel;
+        this.submitHandler = submitHandler;
+        this.defaultRequestType = defaultRequestType == null ? "" : defaultRequestType;
+        this.requestIdPrefix = requestIdPrefix == null || requestIdPrefix.isBlank() ? "WR" : requestIdPrefix;
         initComponents();
+        initializeForm();
     }
 
     /**
@@ -51,7 +88,6 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
         txtDueDate = new javax.swing.JTextField();
         btnBack = new javax.swing.JButton();
         btnSubmit = new javax.swing.JButton();
-        btnCancel = new javax.swing.JButton();
         lblInfo = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(204, 204, 204));
@@ -103,15 +139,6 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
             }
         });
 
-        btnCancel.setBackground(new java.awt.Color(204, 204, 204));
-        btnCancel.setText("Cancel");
-        btnCancel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelActionPerformed(evt);
-            }
-        });
-
         lblInfo.setText("[Low / Medium / High]");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -159,10 +186,8 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
                         .addGap(192, 192, 192))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(211, 211, 211)
+                        .addGap(265, 265, 265)
                         .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -216,30 +241,158 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
                     .addComponent(lblDueDate)
                     .addComponent(txtDueDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBack)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnSubmit)
-                    .addComponent(btnCancel))
+                    .addComponent(btnBack))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelActionPerformed
-
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         // TODO add your handling code here:
+        submitForm();
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         // TODO add your handling code here:
+        navigateBack();
     }//GEN-LAST:event_btnBackActionPerformed
 
+    private void initializeForm() {
+        txtRequestType.setText(defaultRequestType);
+        txtRequestType.setEditable(false);
+        txtRequestId.setText(generateRequestId());
+        populateEnterpriseCombos();
+        populateAssigneeCombo();
+        prefillSourceSelection();
+    }
+
+    private void populateEnterpriseCombos() {
+        cmbSourceEnterprise.removeAllItems();
+        cmbTargetEnt.removeAllItems();
+        cmbSourceOrg.removeAllItems();
+        cmbTargetOrg.removeAllItems();
+
+        if (ecosystem == null) {
+            return;
+        }
+
+        for (Enterprise enterprise : ecosystem.getEnterpriseList()) {
+            cmbSourceEnterprise.addItem(enterprise.getName());
+            cmbTargetEnt.addItem(enterprise.getName());
+        }
+
+        cmbSourceEnterprise.addActionListener(evt -> populateOrganizationCombo(cmbSourceEnterprise, cmbSourceOrg));
+        cmbTargetEnt.addActionListener(evt -> populateOrganizationCombo(cmbTargetEnt, cmbTargetOrg));
+
+        if (cmbSourceEnterprise.getItemCount() > 0) {
+            cmbSourceEnterprise.setSelectedIndex(0);
+            populateOrganizationCombo(cmbSourceEnterprise, cmbSourceOrg);
+        }
+        if (cmbTargetEnt.getItemCount() > 0) {
+            cmbTargetEnt.setSelectedIndex(0);
+            populateOrganizationCombo(cmbTargetEnt, cmbTargetOrg);
+        }
+    }
+
+    private void populateOrganizationCombo(javax.swing.JComboBox<String> enterpriseCombo, javax.swing.JComboBox<String> organizationCombo) {
+        organizationCombo.removeAllItems();
+        if (ecosystem == null) {
+            return;
+        }
+
+        String enterpriseName = (String) enterpriseCombo.getSelectedItem();
+        Enterprise enterprise = ecosystem.findEnterpriseByName(enterpriseName);
+        if (enterprise == null) {
+            return;
+        }
+
+        for (Organization organization : enterprise.getOrganization()) {
+            organizationCombo.addItem(organization.getName());
+        }
+    }
+
+    private void populateAssigneeCombo() {
+        cmbAssignto.removeAllItems();
+        cmbAssignto.addItem("");
+        if (ecosystem == null) {
+            return;
+        }
+
+        for (UserAccount userAccount : ecosystem.getAllUserAccounts()) {
+            cmbAssignto.addItem(userAccount.getUsername());
+        }
+    }
+
+    private void prefillSourceSelection() {
+        if (ecosystem == null || account == null) {
+            return;
+        }
+
+        Organization organization = ecosystem.findOrganizationByUserAccount(account);
+        Enterprise enterprise = ecosystem.findEnterpriseByOrganization(organization);
+        if (enterprise != null) {
+            cmbSourceEnterprise.setSelectedItem(enterprise.getName());
+            populateOrganizationCombo(cmbSourceEnterprise, cmbSourceOrg);
+        }
+        if (organization != null) {
+            cmbSourceOrg.setSelectedItem(organization.getName());
+        }
+    }
+
+    private String generateRequestId() {
+        long suffix = System.currentTimeMillis() % 100000;
+        return requestIdPrefix + "-" + String.format("%05d", suffix);
+    }
+
+    private void submitForm() {
+        if (submitHandler == null) {
+            JOptionPane.showMessageDialog(this, "Submit handler is not connected.");
+            return;
+        }
+
+        String requestId = txtRequestId.getText().trim();
+        String shortDescription = txtShortDescription.getText().trim();
+        String description = txtDescription.getText().trim();
+        String priority = (String) cmbPriority.getSelectedItem();
+        String sourceEnterprise = (String) cmbSourceEnterprise.getSelectedItem();
+        String sourceOrganization = (String) cmbSourceOrg.getSelectedItem();
+        String targetEnterprise = (String) cmbTargetEnt.getSelectedItem();
+        String targetOrganization = (String) cmbTargetOrg.getSelectedItem();
+        String requestType = txtRequestType.getText().trim();
+        String assignedTo = (String) cmbAssignto.getSelectedItem();
+        String dueDate = txtDueDate.getText().trim();
+
+        if (shortDescription.isEmpty() || description.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please complete the short description and description.");
+            return;
+        }
+
+        submitHandler.accept(new WorkRequestFormData(
+                requestId,
+                shortDescription,
+                description,
+                priority == null ? "" : priority,
+                sourceEnterprise == null ? "" : sourceEnterprise,
+                sourceOrganization == null ? "" : sourceOrganization,
+                targetEnterprise == null ? "" : targetEnterprise,
+                targetOrganization == null ? "" : targetOrganization,
+                requestType,
+                assignedTo == null ? "" : assignedTo,
+                dueDate
+        ));
+        JOptionPane.showMessageDialog(this, "Work request created successfully.");
+        navigateBack();
+    }
+
+    private void navigateBack() {
+        if (mainFrame != null && returnPanel != null) {
+            mainFrame.showRoleDashboard(account, returnPanel);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
-    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> cmbAssignto;
     private javax.swing.JComboBox<String> cmbPriority;

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package UI.WorkAreas;
+package Business.WorkSpace;
 
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
@@ -10,6 +10,7 @@ import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**

@@ -12,10 +12,13 @@ import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
 import Business.WorkQueue.ContentPublishingRequest;
 import Business.WorkQueue.WorkRequestStatus;
+import UI.MainFrame;
+import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -82,9 +85,8 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         txtRole = new javax.swing.JTextField();
         lblPhone = new javax.swing.JLabel();
         txtPhone = new javax.swing.JTextField();
-        btnSave = new javax.swing.JButton();
-        btnUpdate = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnSave1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 204, 204));
 
@@ -94,13 +96,13 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         ApproveTab.setBackground(new java.awt.Color(204, 204, 204));
         ApproveTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lblRequestStatistic.setBackground(new java.awt.Color(204, 204, 204));
         lblRequestStatistic.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Request Statistic", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
 
-        ApprovalPanel.setBackground(new java.awt.Color(204, 204, 204));
+        ApprovalPanel.setBackground(new java.awt.Color(255, 255, 255));
         ApprovalPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Request Awating Approval", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 14))); // NOI18N
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -213,7 +215,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         MyProfileTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         MyProfileTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lblName.setText("Name:");
@@ -230,22 +232,23 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
 
         lblPhone.setText("Phone:");
 
-        btnSave.setBackground(new java.awt.Color(204, 204, 204));
-        btnSave.setText("Save");
-        btnSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
+        btnEdit.setBackground(new java.awt.Color(204, 204, 204));
+        btnEdit.setText("Edit");
+        btnEdit.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
+                btnEditActionPerformed(evt);
             }
         });
 
-        btnUpdate.setBackground(new java.awt.Color(204, 204, 204));
-        btnUpdate.setText("Update");
-        btnUpdate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnSave1.setBackground(new java.awt.Color(204, 204, 204));
+        btnSave1.setText("Save");
+        btnSave1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnSave1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSave1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -253,13 +256,6 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(229, 229, 229)
-                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(248, 248, 248)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,8 +279,13 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
                                     .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(245, Short.MAX_VALUE))
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(281, 281, 281)
+                        .addComponent(btnSave1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(284, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -319,9 +320,8 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnLogout))
+                    .addComponent(btnEdit)
+                    .addComponent(btnSave1))
                 .addContainerGap(105, Short.MAX_VALUE))
         );
 
@@ -362,13 +362,13 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
 
         txtName.setText(employee != null ? employee.getName() : "");
-        txtId.setText(account != null && account.getRoleType() != null
-                ? account.getRoleType().getDisplayName() : "");
+        txtId.setText(formatEmployeeId(employee));
         txtOrganization.setText(organization != null ? organization.getName() : "");
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtRole.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtRole.setText(account != null && account.getRoleType() != null
+                ? account.getRoleType().getDisplayName() : "");
 
         if (enterprise != null || organization != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -385,6 +385,57 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         txtEmail.setEditable(false);
         txtPhone.setEditable(false);
         txtRole.setEditable(false);
+    }
+
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
+
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
+
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
+    }
+
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
+    }
+
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
+    }
+
+    private MainFrame findMainFrame() {
+        Component component = this;
+        while (component != null) {
+            if (component instanceof MainFrame) {
+                return (MainFrame) component;
+            }
+            component = SwingUtilities.getWindowAncestor(component);
+            if (component instanceof MainFrame) {
+                return (MainFrame) component;
+            }
+            component = component != null ? component.getParent() : null;
+        }
+        return null;
     }
 
     private void populateContentRequests() {
@@ -481,9 +532,13 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnViewActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveActionPerformed
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnSave1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSave1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSave1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -491,10 +546,9 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane ApproveTab;
     private javax.swing.JTabbedPane MyProfileTab;
     private javax.swing.JButton btnApprove;
-    private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnReject;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnUpdate;
+    private javax.swing.JButton btnSave1;
     private javax.swing.JButton btnView;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

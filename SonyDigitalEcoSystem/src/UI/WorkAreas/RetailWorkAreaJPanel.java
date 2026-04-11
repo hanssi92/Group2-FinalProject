@@ -4,9 +4,11 @@
  */
 package UI.WorkAreas;
 
+import Business.WorkSpace.WorkRequestFormData;
 import Business.DataGenerator;
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
+import Business.Model.Order;
 import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
@@ -56,7 +58,6 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         lblId = new javax.swing.JLabel();
@@ -103,10 +104,6 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate.setText("Update");
         btnUpdate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         lblName.setText("Name:");
 
         lblId.setText("Employee ID");
@@ -127,13 +124,11 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(229, 229, 229)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(265, 265, 265)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,7 +153,7 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
                                     .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(243, Short.MAX_VALUE))
+                .addContainerGap(265, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,12 +186,11 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPhone)
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
                     .addComponent(btnUpdate)
-                    .addComponent(btnLogout))
-                .addContainerGap(96, Short.MAX_VALUE))
+                    .addComponent(btnSave))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         ProfileTab.addTab("My Information", jPanel2);
@@ -207,13 +201,13 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         SalesTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         SalesTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lblRequestStatistic.setBackground(new java.awt.Color(204, 204, 204));
         lblRequestStatistic.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
 
-        ApprovalPanel.setBackground(new java.awt.Color(204, 204, 204));
+        ApprovalPanel.setBackground(new java.awt.Color(255, 255, 255));
         ApprovalPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Sales and Orders", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 14))); // NOI18N
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -340,6 +334,8 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         btnRequest.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Stock request form can be connected next."));
         btnConfirm.addActionListener(evt -> confirmReceipt());
         btnCreate.addActionListener(evt -> openCreateRequestForm());
+        btnUpdate.addActionListener(evt -> enableProfileEditing());
+        btnSave.addActionListener(evt -> saveProfileChanges());
     }
 
     private void populateMyProfileTab() {
@@ -353,7 +349,7 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtId.setText(formatEmployeeId(employee));
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -371,6 +367,26 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         txtEmail.setEditable(false);
         txtPhone.setEditable(false);
         txtId.setEditable(false);
+    }
+
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
+
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
+
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
     }
 
     private void populateSalesOrders() {
@@ -461,6 +477,22 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         return null;
     }
 
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
+    }
+
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
+    }
+
     private void showSelectedTableDetails(JTable table, String title) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow < 0) {
@@ -484,7 +516,6 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane SalesTab;
     private javax.swing.JButton btnConfirm;
     private javax.swing.JButton btnCreate;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnRequest;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;

@@ -6,6 +6,7 @@ package Business.Organization;
 
 import Business.Role.PartnerManager;
 import Business.Role.SupportAgent;
+import Business.Role.SystemAdmin;
 
 /**
  *
@@ -21,5 +22,6 @@ public class OnlineServiceProvider extends Organization {
         super(name, OrganizationType.ONLINE_SERVICE_PROVIDER);
         addRole(new SupportAgent());
         addRole(new PartnerManager());
+        addRole(new SystemAdmin());
     }
 }

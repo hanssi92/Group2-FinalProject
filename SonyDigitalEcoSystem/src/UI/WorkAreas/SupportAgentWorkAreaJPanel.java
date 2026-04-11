@@ -10,6 +10,7 @@ import Business.Enterprise.Enterprise;
 import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
+import UI.MainFrame;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -80,7 +82,6 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         txtPhone = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 204, 204));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -92,13 +93,13 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         TicketTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         TicketTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lblRequestStatistic.setBackground(new java.awt.Color(204, 204, 204));
         lblRequestStatistic.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
 
-        ApprovalPanel.setBackground(new java.awt.Color(204, 204, 204));
+        ApprovalPanel.setBackground(new java.awt.Color(255, 255, 255));
         ApprovalPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Ticket Info", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 14))); // NOI18N
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -217,10 +218,6 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate.setText("Update");
         btnUpdate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -252,13 +249,11 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
                                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(234, 234, 234)
+                        .addGap(289, 289, 289)
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(238, Short.MAX_VALUE))
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(266, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -294,8 +289,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnLogout))
+                    .addComponent(btnUpdate))
                 .addContainerGap(100, Short.MAX_VALUE))
         );
 
@@ -327,7 +321,10 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         btnCreate.addActionListener(evt -> showSelectedTableDetails(tblSupport, "Ticket Details"));
         btnRequest.addActionListener(evt -> assignSelectedTicket());
         btnConfirm.addActionListener(evt -> resolveSelectedTicket());
-        initializeProfileTab();
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        btnUpdate.addActionListener(evt -> enableProfileEditing());
+        btnSave.addActionListener(evt -> saveProfileChanges());
     }
 
     private void populateTickets() {
@@ -338,59 +335,55 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         model.addRow(new Object[]{"TK-5003", "Chris User", "Connection Problem", "Low", "Resolved", "Support Agent", "2026-04-08"});
     }
 
-    private void initializeProfileTab() {
-        if (ProfileTab.getTabCount() > 0) {
-            return;
-        }
-
+    private void populateMyProfileTab() {
         Employee employee = account != null ? account.getEmployee() : null;
         Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
         Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
-
-        JPanel profilePanel = new JPanel(new GridLayout(6, 2, 12, 12));
-        JTextField txtName = new JTextField();
-        JTextField txtRole = new JTextField();
-        JTextField txtOrganization = new JTextField();
-        JTextField txtEnterprise = new JTextField();
-        JTextField txtEmail = new JTextField();
-        JTextField txtId = new JTextField();
 
         txtName.setText(employee != null ? employee.getName() : "");
         txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
         txtOrganization.setText(organization != null ? organization.getName() : "");
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
-        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(formatEmployeeId(employee));
 
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            TicketTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
         txtName.setEditable(false);
         txtRole.setEditable(false);
         txtOrganization.setEditable(false);
         txtEnterprise.setEditable(false);
         txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
         txtId.setEditable(false);
+    }
 
-        profilePanel.add(new JLabel("Name:"));
-        profilePanel.add(txtName);
-        profilePanel.add(new JLabel("Role:"));
-        profilePanel.add(txtRole);
-        profilePanel.add(new JLabel("Organization:"));
-        profilePanel.add(txtOrganization);
-        profilePanel.add(new JLabel("Enterprise:"));
-        profilePanel.add(txtEnterprise);
-        profilePanel.add(new JLabel("Email:"));
-        profilePanel.add(txtEmail);
-        profilePanel.add(new JLabel("Status:"));
-        profilePanel.add(txtId);
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
 
-        JPanel wrapper = new JPanel(new BorderLayout(12, 12));
-        wrapper.add(profilePanel, BorderLayout.CENTER);
-        JButton btnLogoutProfile = new JButton("Log out");
-        btnLogoutProfile.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Logout is handled from the main screen."));
-        JPanel southPanel = new JPanel();
-        southPanel.add(btnLogoutProfile);
-        wrapper.add(southPanel, BorderLayout.SOUTH);
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
 
-        ProfileTab.addTab("My Information", wrapper);
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
     }
 
     private void assignSelectedTicket() {
@@ -410,6 +403,30 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
         tblSupport.setValueAt("Resolved", selectedRow, 4);
+    }
+
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
     }
 
     private void showSelectedTableDetails(JTable table, String title) {
@@ -435,7 +452,6 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane TicketTab;
     private javax.swing.JButton btnConfirm;
     private javax.swing.JButton btnCreate;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnRequest;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
