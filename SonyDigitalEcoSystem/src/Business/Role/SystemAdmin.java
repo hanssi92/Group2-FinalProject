@@ -8,6 +8,9 @@ package Business.Role;
  *
  * @author sumayyahhusain
  */
-public class SystemAdmin {
+public class SystemAdmin extends Role {
     
+    public SystemAdmin() {
+        super(RoleType.SYSTEM_ADMIN);
+    }
 }

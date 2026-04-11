@@ -5,9 +5,15 @@
 package UI.WorkAreas;
 
 import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
+import UI.MainFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -354,19 +360,51 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
 
     private void btnViewDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewDetailsActionPerformed
         // TODO add your handling code here:
-        WorkAreaSupport.showSelectedRowDetails(this, tblRequest, "Request Details");
+        showSelectedTableDetails(tblRequest, "Request Details");
     }//GEN-LAST:event_btnViewDetailsActionPerformed
 
     private void btnNewRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewRequestActionPerformed
         // TODO add your handling code here: "JPanel to CreateNewWorkRequest"
+        openCreateRequestForm();
 
     }//GEN-LAST:event_btnNewRequestActionPerformed
 
     private void initializeDeveloperPanel() {
-        WorkAreaSupport.populateProfileFields(ecosystem, account, txtName, txtRole, txtOrganization, txtEnterprise, txtEmail, txtPhone, txtStatus);
-        WorkAreaSupport.makeReadOnly(txtName, txtRole, txtOrganization, txtEnterprise, txtEmail, txtPhone, txtStatus);
+        populateMyProfileTab();
+        makeProfileReadOnly();
         populateDeveloperRequests();
         btnUpdate.addActionListener(evt -> updateSelectedDeveloperRequest());
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtId.setText(employee != null ? employee.getEmployeeId() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            WorkRequestTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtId.setEditable(false);
     }
 
     private void populateDeveloperRequests() {
@@ -391,6 +429,103 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         lblCompleted.setText("Completed: 2");
     }
 
+    private void openCreateRequestForm() {
+        CreateNewWorkRequest createNew = findMainFrame();
+        if (createNew == null) {
+            JOptionPane.showMessageDialog(this, "Creation is not available.");
+            return;
+        }
+
+        createNew.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedDeveloperRequest,
+                "Developer Request",
+                "WR"
+        ));
+    }
+
+    private void handleCreatedDeveloperRequest(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblRequest.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            data.getTargetOrganization(),
+            "Pending",
+            data.getPriority(),
+            data.getDueDate()
+        });
+
+        if (ecosystem != null) {
+            Organization senderOrganization = ecosystem.findOrganizationByUserAccount(account);
+            Enterprise targetEnterprise = ecosystem.findEnterpriseByName(data.getTargetEnterprise());
+            Organization targetOrganization = targetEnterprise != null
+                    ? targetEnterprise.findOrganizationByName(data.getTargetOrganization())
+                    : null;
+
+            WorkRequest workRequest = new WorkRequest(
+                    data.getShortDescription(),
+                    senderOrganization,
+                    targetOrganization,
+                    data.getDescription()
+            );
+            ecosystem.addWorkRequest(workRequest);
+            if (senderOrganization != null) {
+                senderOrganization.addWorkRequest(workRequest);
+            }
+            if (targetOrganization != null && targetOrganization != senderOrganization) {
+                targetOrganization.addWorkRequest(workRequest);
+            }
+        }
+
+        refreshDeveloperStats();
+    }
+
+    private void refreshDeveloperStats() {
+        int active = tblRequest.getRowCount();
+        int pending = 0;
+        int completed = 0;
+        for (int row = 0; row < tblRequest.getRowCount(); row++) {
+            Object statusValue = tblRequest.getValueAt(row, 3);
+            String status = statusValue != null ? statusValue.toString() : "";
+            if ("Completed".equalsIgnoreCase(status)) {
+                completed++;
+            } else if ("Pending".equalsIgnoreCase(status) || "In Review".equalsIgnoreCase(status)) {
+                pending++;
+            }
+        }
+        lblActivityProject.setText("Active Project: " + active);
+        lblPendingRequest.setText("Pending Requests: " + pending);
+        lblCompleted.setText("Completed: " + completed);
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane MyProfileTab;
     private javax.swing.JPanel StatusPanel;
@@ -425,7 +560,4 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtRole;
     // End of variables declaration//GEN-END:variables
 
-    private void initializeDeveloperPanel() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

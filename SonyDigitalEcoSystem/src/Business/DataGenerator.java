@@ -86,14 +86,14 @@ public class DataGenerator {
     };
 
     private static final Object[][] ROLE_ACCOUNT_SEEDS = {
-        {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.CONTENT_MANAGER, "content", "content123", "Content Manager"},
-        {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.PLAYER_OR_USER, "player", "player123", "Player User"},
-        {OrganizationType.GAME_DEV_STUDIO, RoleType.GAME_DEVELOPER, "developer", "developer123", "Game Developer"},
-        {OrganizationType.COMPONENT_SUPPLIER, RoleType.SUPPLIER_MANAGER, "supplier", "supplier123", "Supplier Manager"},
-        {OrganizationType.MANUFACTURING_PARTNER, RoleType.PRODUCTION_MANAGER, "production", "production123", "Production Manager"},
-        {OrganizationType.RETAILER, RoleType.RETAIL_MANAGER, "retail", "retail123", "Retail Manager"},
-        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.SUPPORT_AGENT, "support", "support123", "Support Agent"},
-        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.PARTNER_MANAGER, "partner", "partner123", "Partner Manager"}
+        {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.CONTENT_MANAGER, "content", "content123", "Sara", "Content", "sara.content@sony.com", "010-3100-1001", true},
+        {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.PLAYER_OR_USER, "player", "player123", "John", "Player", "john.player@sony.com", "010-3100-1002", true},
+        {OrganizationType.GAME_DEV_STUDIO, RoleType.GAME_DEVELOPER, "developer", "developer123", "Mina", "Developer", "mina.developer@sony.com", "010-3100-1003", true},
+        {OrganizationType.COMPONENT_SUPPLIER, RoleType.SUPPLIER_MANAGER, "supplier", "supplier123", "Noah", "Supplier", "noah.supplier@sony.com", "010-3100-1004", true},
+        {OrganizationType.MANUFACTURING_PARTNER, RoleType.PRODUCTION_MANAGER, "production", "production123", "Lisa", "Production", "lisa.production@sony.com", "010-3100-1005", true},
+        {OrganizationType.RETAILER, RoleType.RETAIL_MANAGER, "retail", "retail123", "Tom", "Retail", "tom.retail@sony.com", "010-3100-1006", true},
+        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.SUPPORT_AGENT, "support", "support123", "Emma", "Support", "emma.support@sony.com", "010-3100-1007", true},
+        {OrganizationType.ONLINE_SERVICE_PROVIDER, RoleType.PARTNER_MANAGER, "partner", "partner123", "Chris", "Partner", "chris.partner@sony.com", "010-3100-1008", true}
     };
 
     private static final WorkRequestStatus[] ECOSYSTEM_REQUEST_STATUSES = {
@@ -125,6 +125,7 @@ public class DataGenerator {
         SonyEcoSystem ecosystem = SonyEcoSystem.createDefaultEcosystem();
         seedAllRoleAccounts(ecosystem);
         seedContentPublishingRequests(ecosystem);
+        seedOperationalDashboardData(ecosystem);
         seedEcosystemWorkRequestStatuses(ecosystem.getWorkRequests());
         return ecosystem;
     }
@@ -208,10 +209,13 @@ public class DataGenerator {
                 continue;
             }
 
-            Employee employee = organization.getEmployeeDirectory().createEmployee((String) row[4]);
-            employee.setEmail(username + "@sony.com");
-            employee.setPhone("010-1000-10" + organization.getType().ordinal());
-            employee.setActive(true);
+            Employee employee = organization.getEmployeeDirectory().createEmployee(
+                    (String) row[4],
+                    (String) row[5],
+                    (String) row[6],
+                    (String) row[7],
+                    (Boolean) row[8]
+            );
             userAccountDirectory.createUserAccount(
                     username,
                     (String) row[3],
@@ -247,6 +251,29 @@ public class DataGenerator {
                 senderOrganization.addWorkRequest(request);
             }
         }
+    }
+
+    private static void seedOperationalDashboardData(SonyEcoSystem ecosystem) {
+        if (!ecosystem.getSupplyRequestList().isEmpty()
+                || !ecosystem.getProductionOrderList().isEmpty()
+                || !ecosystem.getRestockRequestList().isEmpty()) {
+            return;
+        }
+
+        ecosystem.getSupplyRequestList().add(new Business.Model.Order(
+                "SR-1001", "Sensor Module", 180, "Component Supplier", "Pending", "2026-04-10", "2026-04-18"));
+        ecosystem.getSupplyRequestList().add(new Business.Model.Order(
+                "SR-1002", "Display Panel", 96, "Component Supplier", "Shipped", "2026-04-08", "2026-04-15"));
+
+        ecosystem.getProductionOrderList().add(new Business.Model.Order(
+                "PO-4581", "PS5 Motherboard", 5000, "Foxconn", "In Production", "2026-04-01", "2026-04-20"));
+        ecosystem.getProductionOrderList().add(new Business.Model.Order(
+                "PO-4610", "DualSense Chipset", 2500, "NXP", "Delayed", "2026-04-05", "2026-04-22"));
+
+        ecosystem.getRestockRequestList().add(new Business.Model.Order(
+                "SO-10043", "Sony WH-1000XM5", 25, "Partner and Service", "Processing", "2026-04-10", "2026-04-17"));
+        ecosystem.getRestockRequestList().add(new Business.Model.Order(
+                "SO-10041", "Sony PS5 Console", 50, "Retailer Stock", "Delivered", "2026-04-08", "2026-04-13"));
     }
 
     private static void seedEcosystemWorkRequestStatuses(ArrayList<WorkRequest> workRequests) {

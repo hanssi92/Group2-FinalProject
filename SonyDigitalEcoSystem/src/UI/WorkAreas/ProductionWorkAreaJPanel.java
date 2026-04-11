@@ -4,18 +4,45 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Model.Order;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import UI.MainFrame;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class ProductionWorkAreaJPanel extends javax.swing.JPanel {
 
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+
     /**
      * Creates new form ProductionWorkAreaJPanel
      */
+    
     public ProductionWorkAreaJPanel() {
-        initComponents();
+        this(DataGenerator.createSeededEcosystem(), null);
     }
+
+    public ProductionWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
+        initComponents();
+        initializeProductionPanel();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -320,6 +347,161 @@ public class ProductionWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeProductionPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populateSchedule();
+        btnView.addActionListener(evt -> showSelectedTableDetails(tblSchedule, "Production Order Details"));
+        btnNewOrder.addActionListener(evt -> openCreateRequestForm());
+        btnUpdate.addActionListener(evt -> updateSelectedOrderStatus());
+        btnRequest.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Supply request action can be connected next."));
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            ScheduleTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+            ProfileTab.setTitleAt(0, "My Information");
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtStatus.setEditable(false);
+    }
+
+    private void populateSchedule() {
+        DefaultTableModel model = (DefaultTableModel) tblSchedule.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"PO-4581", "PS5 Motherboard", "5000 units", "Foxconn", "In Production", "2026-04-01", "2026-04-20"});
+        model.addRow(new Object[]{"PO-4589", "PSVR2 Lens Assembly", "1200 units", "Sony EMS", "Completed", "2026-03-25", "2026-04-12"});
+        model.addRow(new Object[]{"PO-4610", "DualSense Chipset", "2500 units", "NXP", "Delayed", "2026-04-05", "2026-04-22"});
+        model.addRow(new Object[]{"PO-4625", "PS5 Chassis", "7000 units", "Jabil", "In Production", "2026-04-08", "2026-04-24"});
+        lblActivityProject.setText("In Production: 2");
+        lblPendingRequest.setText("Delayed: 1");
+        lblCompleted.setText("Completed: 1");
+        lblCrossEnterprise.setText("Cross-Enterprise: 3");
+    }
+
+    private void updateSelectedOrderStatus() {
+        int selectedRow = tblSchedule.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select an order first.");
+            return;
+        }
+        tblSchedule.setValueAt("Completed", selectedRow, 4);
+        lblCompleted.setText("Completed: 2");
+    }
+
+    private void openCreateRequestForm() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+
+        mainFrame.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedProductionOrder,
+                "Production Order",
+                "PO"
+        ));
+    }
+
+    private void handleCreatedProductionOrder(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblSchedule.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            "1 unit",
+            data.getSourceOrganization(),
+            "Pending",
+            LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+            data.getDueDate()
+        });
+
+        if (ecosystem != null) {
+            ecosystem.getProductionOrderList().add(new Order(
+                    data.getRequestId(),
+                    data.getShortDescription(),
+                    1,
+                    data.getSourceOrganization(),
+                    "Pending",
+                    LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                    data.getDueDate()
+            ));
+        }
+
+        refreshProductionStats();
+    }
+
+    private void refreshProductionStats() {
+        int inProduction = 0;
+        int delayed = 0;
+        int completed = 0;
+        for (int row = 0; row < tblSchedule.getRowCount(); row++) {
+            Object statusValue = tblSchedule.getValueAt(row, 4);
+            String status = statusValue != null ? statusValue.toString() : "";
+            if ("Completed".equalsIgnoreCase(status)) {
+                completed++;
+            } else if ("Delayed".equalsIgnoreCase(status)) {
+                delayed++;
+            } else {
+                inProduction++;
+            }
+        }
+        lblActivityProject.setText("In Production: " + inProduction);
+        lblPendingRequest.setText("Delayed: " + delayed);
+        lblCompleted.setText("Completed: " + completed);
+        lblCrossEnterprise.setText("Cross-Enterprise: " + tblSchedule.getRowCount());
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane ProfileTab;

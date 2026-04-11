@@ -4,18 +4,42 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Model.Order;
+import Business.SonyEcoSystem;
+import Business.WorkQueue.ContentPublishingRequest;
+import Business.WorkQueue.WorkRequest;
+import Business.WorkQueue.WorkRequestStatus;
+import UI.MainFrame;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Hyungs
  */
 public class WorkRequestManagementJPanel extends javax.swing.JPanel {
+    private final SonyEcoSystem ecosystem;
+    private final ArrayList<DashboardEntry> dashboardEntries;
+    private boolean dirty;
+
 
     /**
      * Creates new form WorkRequestManagementJPanel
      */
     public WorkRequestManagementJPanel() {
-        initComponents();
+        this(DataGenerator.createSeededEcosystem());
     }
+
+    public WorkRequestManagementJPanel(SonyEcoSystem ecosystem) {
+        this.ecosystem = ecosystem;
+        this.dashboardEntries = new ArrayList<>();
+        initComponents();
+        initializeDashboard();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -217,9 +241,288 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         // TODO add your handling code here:
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
     }//GEN-LAST:event_btnBackActionPerformed
 
+    private void initializeDashboard() {
+        populateDashboardTable();
+        btnRequest1.addActionListener(evt -> showSelectedDetails());
+        btnCreate.addActionListener(evt -> editSelectedRequest());
+        btnConfirm.addActionListener(evt -> deleteSelectedRequest());
+        btnSave.addActionListener(evt -> saveDashboardChanges());
+    }
 
+    private void populateDashboardTable() {
+        dashboardEntries.clear();
+        DefaultTableModel model = (DefaultTableModel) tblDashBoard.getModel();
+        model.setRowCount(0);
+
+        if (ecosystem != null) {
+            for (WorkRequest workRequest : ecosystem.getWorkRequests()) {
+                dashboardEntries.add(createWorkRequestEntry(workRequest));
+            }
+            for (Order order : ecosystem.getSupplyRequestList()) {
+                dashboardEntries.add(createOrderEntry(order, "Supply Request", "Component Supplier", "Manufacturing Partner", "High"));
+            }
+            for (Order order : ecosystem.getProductionOrderList()) {
+                dashboardEntries.add(createOrderEntry(order, "Production Order", order.getFromEnterprise(), "Manufacturing Partner", "Medium"));
+            }
+            for (Order order : ecosystem.getRestockRequestList()) {
+                dashboardEntries.add(createOrderEntry(order, "Retail Request", order.getFromEnterprise(), "Retailer", "Medium"));
+            }
+        }
+
+        for (DashboardEntry entry : dashboardEntries) {
+            model.addRow(new Object[]{
+                entry.requestId,
+                entry.title,
+                entry.type,
+                entry.fromOrg,
+                entry.toOrg,
+                entry.status,
+                entry.priority
+            });
+        }
+
+        updateStatistics();
+    }
+
+    private DashboardEntry createWorkRequestEntry(WorkRequest workRequest) {
+        String requestId = workRequest instanceof ContentPublishingRequest
+                ? ((ContentPublishingRequest) workRequest).getRequestId()
+                : "WR-" + Math.abs(workRequest.hashCode());
+        String type = workRequest instanceof ContentPublishingRequest ? "Content Publishing" : "Work Request";
+        String priority = workRequest instanceof ContentPublishingRequest
+                ? ((ContentPublishingRequest) workRequest).getPriority()
+                : "Medium";
+        String fromOrg = workRequest.getSenderOrganization() != null ? workRequest.getSenderOrganization().getName() : "";
+        String toOrg = workRequest.getReceiverOrganization() != null ? workRequest.getReceiverOrganization().getName() : "";
+        String message = workRequest.getMessage() != null ? workRequest.getMessage() : "";
+
+        return new DashboardEntry(
+                requestId,
+                workRequest.getTitle(),
+                type,
+                fromOrg,
+                toOrg,
+                formatWorkRequestStatus(workRequest.getStatus()),
+                priority,
+                message,
+                workRequest,
+                null
+        );
+    }
+
+    private DashboardEntry createOrderEntry(Order order, String type, String fromOrg, String toOrg, String priority) {
+        return new DashboardEntry(
+                order.getOrderId(),
+                order.getItemName(),
+                type,
+                safe(fromOrg),
+                safe(toOrg),
+                safe(order.getStatus()),
+                priority,
+                "Order Date: " + safe(order.getOrderDate()) + "\nExpected: " + safe(order.getExpectedDate()),
+                null,
+                order
+        );
+    }
+
+    private void updateStatistics() {
+        int total = dashboardEntries.size();
+        int pending = 0;
+        int cross = 0;
+        int completed = 0;
+
+        for (DashboardEntry entry : dashboardEntries) {
+            String status = entry.status.toLowerCase();
+            if (status.contains("pending")
+                    || status.contains("new")
+                    || status.contains("processing")
+                    || status.contains("review")
+                    || status.contains("production")
+                    || status.contains("delayed")
+                    || status.contains("backordered")) {
+                pending++;
+            }
+            if (!entry.fromOrg.isBlank() && !entry.toOrg.isBlank() && !entry.fromOrg.equalsIgnoreCase(entry.toOrg)) {
+                cross++;
+            }
+            if (status.contains("approved")
+                    || status.contains("completed")
+                    || status.contains("delivered")
+                    || status.contains("resolved")
+                    || status.contains("closed")
+                    || status.contains("shipped")) {
+                completed++;
+            }
+        }
+
+        lblTotalRequest.setText("<html><center>Total Request<br><b>" + total + "</b></center></html>");
+        lblTotalPending.setText("<html><center>Total Pending<br><b>" + pending + "</b></center></html>");
+        lblTotalCross.setText("<html><center>Cross-Enterprise<br><b>" + cross + "</b></center></html>");
+        lblTotalComplete.setText("<html><center>Total Completed<br><b>" + completed + "</b></center></html>");
+    }
+
+    private void showSelectedDetails() {
+        int selectedRow = tblDashBoard.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a work request first.");
+            return;
+        }
+
+        DashboardEntry entry = dashboardEntries.get(selectedRow);
+        String detail = "Request ID: " + entry.requestId
+                + "\nTitle: " + entry.title
+                + "\nType: " + entry.type
+                + "\nFrom Org: " + entry.fromOrg
+                + "\nTo Org: " + entry.toOrg
+                + "\nStatus: " + entry.status
+                + "\nPriority: " + entry.priority
+                + "\nMessage: " + entry.message;
+        JOptionPane.showMessageDialog(this, detail, "Work Request Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void editSelectedRequest() {
+        int selectedRow = tblDashBoard.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a work request first.");
+            return;
+        }
+
+        DashboardEntry entry = dashboardEntries.get(selectedRow);
+        String updatedTitle = JOptionPane.showInputDialog(this, "Edit Title", entry.title);
+        if (updatedTitle == null || updatedTitle.trim().isEmpty()) {
+            return;
+        }
+
+        String updatedPriority = JOptionPane.showInputDialog(this, "Edit Priority", entry.priority);
+        if (updatedPriority == null || updatedPriority.trim().isEmpty()) {
+            updatedPriority = entry.priority;
+        }
+
+        entry.title = updatedTitle.trim();
+        entry.priority = updatedPriority.trim();
+        applyEntryChanges(entry);
+        dirty = true;
+        populateDashboardTable();
+    }
+
+    private void deleteSelectedRequest() {
+        int selectedRow = tblDashBoard.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a work request first.");
+            return;
+        }
+
+        DashboardEntry entry = dashboardEntries.get(selectedRow);
+        if (entry.workRequest != null) {
+            ecosystem.getWorkRequests().remove(entry.workRequest);
+            if (entry.workRequest.getSenderOrganization() != null) {
+                entry.workRequest.getSenderOrganization().removeWorkRequest(entry.workRequest);
+            }
+            if (entry.workRequest.getReceiverOrganization() != null
+                    && entry.workRequest.getReceiverOrganization() != entry.workRequest.getSenderOrganization()) {
+                entry.workRequest.getReceiverOrganization().removeWorkRequest(entry.workRequest);
+            }
+        } else if (entry.order != null) {
+            ecosystem.getSupplyRequestList().remove(entry.order);
+            ecosystem.getProductionOrderList().remove(entry.order);
+            ecosystem.getRestockRequestList().remove(entry.order);
+        }
+
+        dirty = true;
+        populateDashboardTable();
+    }
+
+    private void saveDashboardChanges() {
+        populateDashboardTable();
+        dirty = false;
+        JOptionPane.showMessageDialog(this, "Dashboard changes saved.");
+    }
+
+    private void applyEntryChanges(DashboardEntry entry) {
+        if (entry.workRequest != null) {
+            entry.workRequest.setTitle(entry.title);
+            if (entry.workRequest instanceof ContentPublishingRequest) {
+                ((ContentPublishingRequest) entry.workRequest).setPriority(entry.priority);
+            }
+        } else if (entry.order != null) {
+            entry.order.setItemName(entry.title);
+        }
+    }
+
+    private String formatWorkRequestStatus(WorkRequestStatus status) {
+        if (status == null) {
+            return "";
+        }
+        String raw = status.name().toLowerCase().replace('_', ' ');
+        String[] parts = raw.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isBlank()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+        }
+        return builder.toString();
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private static final class DashboardEntry {
+        private String requestId;
+        private String title;
+        private final String type;
+        private final String fromOrg;
+        private final String toOrg;
+        private final String status;
+        private String priority;
+        private final String message;
+        private final WorkRequest workRequest;
+        private final Order order;
+
+        private DashboardEntry(
+                String requestId,
+                String title,
+                String type,
+                String fromOrg,
+                String toOrg,
+                String status,
+                String priority,
+                String message,
+                WorkRequest workRequest,
+                Order order) {
+            this.requestId = requestId;
+            this.title = title;
+            this.type = type;
+            this.fromOrg = fromOrg;
+            this.toOrg = toOrg;
+            this.status = status;
+            this.priority = priority;
+            this.message = message;
+            this.workRequest = workRequest;
+            this.order = order;
+        }
+    }
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ApprovalPanel;
     private javax.swing.JPanel StatusPanel;

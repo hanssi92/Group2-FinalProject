@@ -4,17 +4,42 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import UI.MainFrame;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
 
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+
     /**
      * Creates new form SupplierWorkAreaJPanel
      */
+    
     public SupplierWorkAreaJPanel() {
+        this(DataGenerator.createSeededEcosystem(), null);
+    }
+
+    public SupplierWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
         initComponents();
+        initializeSupplierPanel();
     }
 
     /**
@@ -298,6 +323,154 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeSupplierPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populateSupplyRequests();
+        btnView.addActionListener(evt -> showSelectedTableDetails(tblSales, "Supply Request Details"));
+        btnRequest.addActionListener(evt -> openCreateRequestForm());
+        btnConfirm.addActionListener(evt -> markSelectedSupplyAsShipped());
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            SupplyRequestTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtId.setEditable(false);
+    }
+
+    private void populateSupplyRequests() {
+        DefaultTableModel model = (DefaultTableModel) tblSales.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"SR-1001", "Sensor Module", 180, "Component Supplier", "Manufacturing Partner", "Pending", "High"});
+        model.addRow(new Object[]{"SR-1002", "Display Panel", 96, "Component Supplier", "Manufacturing Partner", "Shipped", "Medium"});
+        model.addRow(new Object[]{"SR-1003", "Controller Board", 142, "Component Supplier", "Manufacturing Partner", "Processing", "High"});
+        lblRequestStatistic.setText("<html><b>Pending Requests:</b> 2 &nbsp;&nbsp;&nbsp; <b>Shipped Today:</b> 1 &nbsp;&nbsp;&nbsp; <b>High Priority:</b> 2</html>");
+    }
+
+    private void markSelectedSupplyAsShipped() {
+        int selectedRow = tblSales.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a request first.");
+            return;
+        }
+        tblSales.setValueAt("Shipped", selectedRow, 5);
+    }
+
+    private void openCreateRequestForm() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+
+        mainFrame.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedSupplyRequest,
+                "Supply Request",
+                "SR"
+        ));
+    }
+
+    private void handleCreatedSupplyRequest(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblSales.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            1,
+            data.getSourceOrganization(),
+            data.getTargetOrganization(),
+            "Pending",
+            data.getPriority()
+        });
+
+        if (ecosystem != null) {
+            ecosystem.getSupplyRequestList().add(new Order(
+                    data.getRequestId(),
+                    data.getShortDescription(),
+                    1,
+                    data.getSourceOrganization(),
+                    "Pending",
+                    LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                    data.getDueDate()
+            ));
+        }
+
+        refreshSupplyStats();
+    }
+
+    private void refreshSupplyStats() {
+        int pending = 0;
+        int shipped = 0;
+        int high = 0;
+        for (int row = 0; row < tblSales.getRowCount(); row++) {
+            String status = String.valueOf(tblSales.getValueAt(row, 5));
+            String priority = String.valueOf(tblSales.getValueAt(row, 6));
+            if ("Shipped".equalsIgnoreCase(status)) {
+                shipped++;
+            } else {
+                pending++;
+            }
+            if ("High".equalsIgnoreCase(priority)) {
+                high++;
+            }
+        }
+        lblRequestStatistic.setText("<html><b>Pending Requests:</b> " + pending
+                + " &nbsp;&nbsp;&nbsp; <b>Shipped Today:</b> " + shipped
+                + " &nbsp;&nbsp;&nbsp; <b>High Priority:</b> " + high + "</html>");
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ApprovalPanel;

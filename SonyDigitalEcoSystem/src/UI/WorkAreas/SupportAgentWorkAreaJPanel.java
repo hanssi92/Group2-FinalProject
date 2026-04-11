@@ -4,17 +4,43 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
 
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+
     /**
      * Creates new form SupportAgentWorkAreaJPanel
      */
+    
     public SupportAgentWorkAreaJPanel() {
+        this(DataGenerator.createSeededEcosystem(), null);
+    }
+    public SupportAgentWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
         initComponents();
+        initializeSupportPanel();
     }
 
     /**
@@ -32,7 +58,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         lblRequestStatistic = new javax.swing.JLabel();
         ApprovalPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblSales = new javax.swing.JTable();
+        tblSupport = new javax.swing.JTable();
         btnRequest = new javax.swing.JButton();
         btnConfirm = new javax.swing.JButton();
         btnCreate = new javax.swing.JButton();
@@ -77,8 +103,8 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        tblSales.setBackground(new java.awt.Color(204, 204, 204));
-        tblSales.setModel(new javax.swing.table.DefaultTableModel(
+        tblSupport.setBackground(new java.awt.Color(204, 204, 204));
+        tblSupport.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -97,7 +123,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(tblSales);
+        jScrollPane2.setViewportView(tblSupport);
 
         javax.swing.GroupLayout ApprovalPanelLayout = new javax.swing.GroupLayout(ApprovalPanel);
         ApprovalPanel.setLayout(ApprovalPanelLayout);
@@ -295,6 +321,113 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeSupportPanel() {
+        populateTickets();
+        lblRequestStatistic.setText("<html><b>Open Tickets:</b> 5 &nbsp;&nbsp;&nbsp; <b>Assigned To Me:</b> 2 &nbsp;&nbsp;&nbsp; <b>Resolved Today:</b> 3</html>");
+        btnCreate.addActionListener(evt -> showSelectedTableDetails(tblSupport, "Ticket Details"));
+        btnRequest.addActionListener(evt -> assignSelectedTicket());
+        btnConfirm.addActionListener(evt -> resolveSelectedTicket());
+        initializeProfileTab();
+    }
+
+    private void populateTickets() {
+        DefaultTableModel model = (DefaultTableModel) tblSupport.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"TK-5001", "John Player", "Login Issue", "High", "Open", "Unassigned", "2026-04-10"});
+        model.addRow(new Object[]{"TK-5002", "Amy Gamer", "Billing Error", "Medium", "Assigned", "Support Agent", "2026-04-09"});
+        model.addRow(new Object[]{"TK-5003", "Chris User", "Connection Problem", "Low", "Resolved", "Support Agent", "2026-04-08"});
+    }
+
+    private void initializeProfileTab() {
+        if (ProfileTab.getTabCount() > 0) {
+            return;
+        }
+
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        JPanel profilePanel = new JPanel(new GridLayout(6, 2, 12, 12));
+        JTextField txtName = new JTextField();
+        JTextField txtRole = new JTextField();
+        JTextField txtOrganization = new JTextField();
+        JTextField txtEnterprise = new JTextField();
+        JTextField txtEmail = new JTextField();
+        JTextField txtId = new JTextField();
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtId.setEditable(false);
+
+        profilePanel.add(new JLabel("Name:"));
+        profilePanel.add(txtName);
+        profilePanel.add(new JLabel("Role:"));
+        profilePanel.add(txtRole);
+        profilePanel.add(new JLabel("Organization:"));
+        profilePanel.add(txtOrganization);
+        profilePanel.add(new JLabel("Enterprise:"));
+        profilePanel.add(txtEnterprise);
+        profilePanel.add(new JLabel("Email:"));
+        profilePanel.add(txtEmail);
+        profilePanel.add(new JLabel("Status:"));
+        profilePanel.add(txtId);
+
+        JPanel wrapper = new JPanel(new BorderLayout(12, 12));
+        wrapper.add(profilePanel, BorderLayout.CENTER);
+        JButton btnLogoutProfile = new JButton("Log out");
+        btnLogoutProfile.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Logout is handled from the main screen."));
+        JPanel southPanel = new JPanel();
+        southPanel.add(btnLogoutProfile);
+        wrapper.add(southPanel, BorderLayout.SOUTH);
+
+        ProfileTab.addTab("My Information", wrapper);
+    }
+
+    private void assignSelectedTicket() {
+        int selectedRow = tblSupport.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a ticket first.");
+            return;
+        }
+        tblSupport.setValueAt("Assigned", selectedRow, 4);
+        tblSupport.setValueAt("Support Agent", selectedRow, 5);
+    }
+
+    private void resolveSelectedTicket() {
+        int selectedRow = tblSupport.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a ticket first.");
+            return;
+        }
+        tblSupport.setValueAt("Resolved", selectedRow, 4);
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ApprovalPanel;
@@ -318,7 +451,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblPhone;
     private javax.swing.JLabel lblRequestStatistic;
     private javax.swing.JLabel lblRole;
-    private javax.swing.JTable tblSales;
+    private javax.swing.JTable tblSupport;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEnterprise;
     private javax.swing.JTextField txtId;
