@@ -28,7 +28,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="mainTab" pref="784" max="32767" attributes="0"/>
+              <Component id="mainTab" pref="830" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -36,7 +36,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="12" max="32767" attributes="0"/>
+              <EmptySpace pref="22" max="32767" attributes="0"/>
               <Component id="mainTab" min="-2" pref="520" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
           </Group>
@@ -125,20 +125,18 @@
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="lblFirstName" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="22" max="32767" attributes="0"/>
+                                      <EmptySpace pref="67" max="32767" attributes="0"/>
                                       <Component id="txtFirstName" min="-2" pref="135" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                           <Component id="lblOrganization" max="32767" attributes="0"/>
-                                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                              <Component id="lblRole" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="lblPassword" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="lblUsername" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="lblEmail" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="lblPhone" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="lblLastName" alignment="0" max="32767" attributes="0"/>
-                                          </Group>
+                                          <Component id="lblRole" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblPassword" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblUsername" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblEmail" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblPhone" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblLastName" alignment="0" max="32767" attributes="0"/>
                                           <Component id="lblEnterprise" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="32767" attributes="0"/>
@@ -405,7 +403,7 @@
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane1" pref="536" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane1" pref="473" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -487,6 +485,9 @@
                           </Border>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSearchActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnAdd">
                       <Properties>
@@ -500,6 +501,9 @@
                           </Border>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnEdit">
                       <Properties>
@@ -513,6 +517,9 @@
                           </Border>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnDelete">
                       <Properties>
@@ -526,6 +533,9 @@
                           </Border>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnActive">
                       <Properties>
@@ -539,6 +549,9 @@
                           </Border>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnActiveActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -802,7 +815,7 @@
                                       <Component id="btnClearOrg" min="-2" pref="88" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="14" max="32767" attributes="0"/>
+                              <EmptySpace pref="60" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -825,7 +838,7 @@
                                   <Component id="cmbStatus" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="btnSaveorg" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnClearOrg" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -1153,7 +1166,7 @@
                                   <Component id="txtEnterType" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="cmbEnterStatus" min="-2" pref="110" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="106" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="152" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>

@@ -27,4 +27,20 @@ public class EmployeeDirectory {
         employeeList.add(employee);
         return employee;
     }
+
+    public Employee createEmployee(String firstName, String lastName, String email, String phone, boolean active) {
+        Employee employee = new Employee(firstName, lastName, email, phone, active);
+        employeeList.add(employee);
+        return employee;
+    }
+
+    public void addEmployee(Employee employee) {
+        if (employee != null && !employeeList.contains(employee)) {
+            employeeList.add(employee);
+        }
+    }
+
+    public boolean removeEmployee(Employee employee) {
+        return employeeList.remove(employee);
+    }
 }

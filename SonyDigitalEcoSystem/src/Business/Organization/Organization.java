@@ -18,12 +18,13 @@ import java.util.ArrayList;
  */
 public abstract class Organization {
     
-    private final String name;
+    private String name;
     private final OrganizationType type;
     private final ArrayList<Role> supportedRoles;
     private final ArrayList<WorkRequest> workQueue;
     private final EmployeeDirectory employeeDirectory;
     private final UserAccountDirectory userAccountDirectory;
+    private boolean active;
 
     
     //protected organization is the constructor used by child classes when they inherit from Organization
@@ -35,6 +36,7 @@ public abstract class Organization {
         this.workQueue = new ArrayList<>();
         this.employeeDirectory = new EmployeeDirectory();
         this.userAccountDirectory = new UserAccountDirectory();
+        this.active = true;
     }
 
     public String getName() {
@@ -43,6 +45,10 @@ public abstract class Organization {
 
     public OrganizationType getType() {
         return type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<Role> getSupportedRoles() {
@@ -55,6 +61,14 @@ public abstract class Organization {
 
     public UserAccountDirectory getUserAccountDirectory() {
         return userAccountDirectory;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void addRole(Role role) {

@@ -21,7 +21,11 @@ import Business.Organization.Retailer;
 import Business.Role.Role;
 import Business.Role.RoleType;
 import Business.UserAccount.UserAccount;
+import Business.WorkQueue.ContentPublishingRequest;
 import Business.WorkQueue.WorkRequest;
+import Business.WorkQueue.WorkRequestStatus;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -141,6 +145,7 @@ public class SonyEcoSystem {
                 for (UserAccount userAccount : organization.getUserAccountDirectory().getUserAccountList()) {
                     if (userAccount.getUsername().equalsIgnoreCase(username)
                             && userAccount.getPassword().equals(password)
+                            && userAccount.isActive()
                             && userAccount.getRoleType() == roleType) {
                         return userAccount;
                     }
@@ -165,6 +170,108 @@ public class SonyEcoSystem {
         }
 
         return new ArrayList<>(roleTypes);
+    }
+
+    public ArrayList<UserAccount> getAllUserAccounts() {
+        ArrayList<UserAccount> userAccounts = new ArrayList<>();
+
+        for (Enterprise enterprise : enterpriseList) {
+            for (Organization organization : enterprise.getOrganization()) {
+                userAccounts.addAll(organization.getUserAccountDirectory().getUserAccountList());
+            }
+        }
+
+        return userAccounts;
+    }
+
+    public Organization findOrganizationByUserAccount(UserAccount targetAccount) {
+        if (targetAccount == null) {
+            return null;
+        }
+
+        for (Enterprise enterprise : enterpriseList) {
+            for (Organization organization : enterprise.getOrganization()) {
+                for (UserAccount userAccount : organization.getUserAccountDirectory().getUserAccountList()) {
+                    if (userAccount == targetAccount) {
+                        return organization;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Enterprise findEnterpriseByOrganization(Organization targetOrganization) {
+        if (targetOrganization == null) {
+            return null;
+        }
+
+        for (Enterprise enterprise : enterpriseList) {
+            for (Organization organization : enterprise.getOrganization()) {
+                if (organization == targetOrganization) {
+                    return enterprise;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Enterprise findEnterpriseByName(String enterpriseName) {
+        for (Enterprise enterprise : enterpriseList) {
+            if (enterprise.getName().equalsIgnoreCase(enterpriseName)) {
+                return enterprise;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<ContentPublishingRequest> getContentPublishingRequests() {
+        ArrayList<ContentPublishingRequest> requests = new ArrayList<>();
+
+        for (WorkRequest workRequest : workRequestList) {
+            if (workRequest instanceof ContentPublishingRequest) {
+                requests.add((ContentPublishingRequest) workRequest);
+            }
+        }
+
+        return requests;
+    }
+
+    public int getPendingContentApprovalCount() {
+        return countContentRequestsByStatus(WorkRequestStatus.PENDING);
+    }
+
+    public int getRejectedContentRequestCount() {
+        return countContentRequestsByStatus(WorkRequestStatus.REJECTED);
+    }
+
+    public int getApprovedContentRequestsTodayCount() {
+        int approvedToday = 0;
+        LocalDate today = LocalDate.now();
+
+        for (ContentPublishingRequest request : getContentPublishingRequests()) {
+            if (request.getStatus() == WorkRequestStatus.APPROVED
+                    && request.getRequestDate() != null
+                    && request.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().equals(today)) {
+                approvedToday++;
+            }
+        }
+
+        return approvedToday;
+    }
+
+    private int countContentRequestsByStatus(WorkRequestStatus status) {
+        int count = 0;
+
+        for (ContentPublishingRequest request : getContentPublishingRequests()) {
+            if (request.getStatus() == status) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     public static SonyEcoSystem createDefaultEcosystem() {

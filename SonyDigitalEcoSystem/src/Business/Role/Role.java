@@ -23,4 +23,9 @@ public abstract class Role {
     public String getDisplayName() {
         return type.getDisplayName();
     }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

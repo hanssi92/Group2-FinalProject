@@ -4,20 +4,27 @@
  */
 package UI;
 
+import Business.DataGenerator;
+import Business.SonyEcoSystem;
 import java.awt.BorderLayout;
+import javax.swing.JPanel;
 
 /**
  *
  * @author sumayyahhusain
  */
 public class MainFrame extends javax.swing.JFrame {
+    
+    private final SonyEcoSystem ecosystem;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+        ecosystem = DataGenerator.createSeededEcosystem();
         initComponents();
         showLoginPanel();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -79,6 +86,22 @@ public class MainFrame extends javax.swing.JFrame {
         cardSequencePanel.revalidate();
         cardSequencePanel.repaint();
 
+    }
+    
+    public void showPanel(JPanel panel) {
+        actionJPanel.setVisible(false);
+        jSplitPane1.setDividerSize(0);
+        jSplitPane1.setDividerLocation(0);
+        cardSequencePanel.removeAll();
+        cardSequencePanel.setLayout(new BorderLayout());
+        cardSequencePanel.add(panel, BorderLayout.CENTER);
+        cardSequencePanel.revalidate();
+        cardSequencePanel.repaint();
+        
+    }
+    
+    public void showLoginScreen() {
+        showLoginPanel();
     }
     
     /**

@@ -4,18 +4,60 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.DigitalEntertainment;
+import Business.Enterprise.Enterprise;
+import Business.Enterprise.EnterpriseType;
+import Business.Enterprise.HardwareAndSupplyChain;
+import Business.Enterprise.PartnerAndService;
+import Business.Organization.Organization;
+import Business.Organization.OrganizationType;
+import Business.Role.Role;
+import Business.Role.RoleType;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
+    private final SonyEcoSystem ecosystem;
+    private final ArrayList<UserAccount> displayedUsers;
+    private final ArrayList<Organization> displayedOrganizations;
+    private final ArrayList<Enterprise> displayedEnterprises;
+
+    private UserAccount selectedUserAccount;
+    private Organization selectedOrganization;
+    private Enterprise selectedEnterprise;
+    
     /**
      * Creates new form AdminWorkAreaJPanel
      */
+    
     public AdminWorkAreaJPanel() {
-        initComponents();
+        this(DataGenerator.createSeededEcosystem());
     }
+    
+    public AdminWorkAreaJPanel(SonyEcoSystem ecosystem) {
+        this.ecosystem = ecosystem == null ? DataGenerator.createSeededEcosystem() : ecosystem;
+        this.displayedUsers = new ArrayList<>();
+        this.displayedOrganizations = new ArrayList<>();
+        this.displayedEnterprises = new ArrayList<>();
+        initComponents();
+        initializeAdminWorkspace();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,18 +200,17 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(RightPanelLayout.createSequentialGroup()
                         .addComponent(lblFirstName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
                         .addComponent(txtFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(RightPanelLayout.createSequentialGroup()
                         .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblOrganization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(lblRole, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblPhone, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblLastName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblLastName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblEnterprise, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -267,22 +308,47 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnSearch.setBackground(new java.awt.Color(204, 204, 204));
         btnSearch.setText("Search");
         btnSearch.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
 
         btnAdd.setBackground(new java.awt.Color(204, 204, 204));
         btnAdd.setText("Add");
         btnAdd.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnEdit.setBackground(new java.awt.Color(204, 204, 204));
         btnEdit.setText("Edit");
         btnEdit.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         btnDelete.setBackground(new java.awt.Color(204, 204, 204));
         btnDelete.setText("Delete");
         btnDelete.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnActive.setBackground(new java.awt.Color(204, 204, 204));
         btnActive.setText("Update");
         btnActive.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnActive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActiveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout LeftPanelLayout = new javax.swing.GroupLayout(LeftPanel);
         LeftPanel.setLayout(LeftPanelLayout);
@@ -311,7 +377,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(LeftPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         LeftPanelLayout.setVerticalGroup(
@@ -488,7 +554,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                         .addComponent(btnSaveorg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnClearOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         OrgRightPanelLayout.setVerticalGroup(
             OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -506,7 +572,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(lblStatus)
                     .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
-                .addGroup(OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnSaveorg)
                     .addComponent(btnClearOrg))
                 .addContainerGap(240, Short.MAX_VALUE))
@@ -662,7 +728,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(txtEnterType)
                     .addGroup(EnterRightPanelLayout.createSequentialGroup()
                         .addComponent(cmbEnterStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 106, Short.MAX_VALUE)))
+                        .addGap(0, 152, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(EnterRightPanelLayout.createSequentialGroup()
                 .addGap(31, 31, 31)
@@ -705,18 +771,654 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mainTab, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+                .addComponent(mainTab, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
+                .addContainerGap(22, Short.MAX_VALUE)
                 .addComponent(mainTab, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeAdminWorkspace() {
+        configurePanelTitles();
+        configureComboBoxes();
+        configureTables();
+        registerEventHandlers();
+        populateAllTables();
+        clearUserForm();
+        clearOrganizationForm();
+        clearEnterpriseForm();
+    }
+
+    private void configurePanelTitles() {
+        LeftPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "User List"));
+        OrgLeftPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Organization List"));
+        EnterLeftPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Enterprise List"));
+        lblEnterprise.setText("Status:");
+    }
+
+    private void configureComboBoxes() {
+        cmbEnterprise.setModel(new DefaultComboBoxModel<>(new String[]{"Active", "Inactive"}));
+        cmbStatus.setModel(new DefaultComboBoxModel<>(new String[]{"Active", "Inactive"}));
+        cmbEnterStatus.setModel(new DefaultComboBoxModel<>(new String[]{"Active", "Inactive"}));
+        populateOrganizationCombo();
+        populateRoleCombo(null);
+    }
+
+    private void configureTables() {
+        tblUser.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblOrganization.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblEnterprise.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+
+    private void registerEventHandlers() {
+        btnSearch.addActionListener(evt -> populateUserTable(txtSearch.getText()));
+        btnAdd.addActionListener(evt -> {
+            selectedUserAccount = null;
+            clearUserForm();
+        });
+        btnEdit.addActionListener(evt -> loadSelectedUser());
+        btnDelete.addActionListener(evt -> deleteSelectedUser());
+        btnActive.addActionListener(evt -> toggleSelectedUserStatus());
+        btnSave.addActionListener(evt -> saveUser());
+        btnClear.addActionListener(evt -> clearUserForm());
+
+        btnSearchOrg.addActionListener(evt -> populateOrganizationTable(txtSearchOrg.getText()));
+        btnAddOrg.addActionListener(evt -> {
+            selectedOrganization = null;
+            clearOrganizationForm();
+        });
+        btnEditOrg.addActionListener(evt -> loadSelectedOrganization());
+        btnDeleteOrg.addActionListener(evt -> deleteSelectedOrganization());
+        btnUpdateOrg.addActionListener(evt -> toggleSelectedOrganizationStatus());
+        btnClearOrg.addActionListener(evt -> clearOrganizationForm());
+
+        btnEnterSearch.addActionListener(evt -> populateEnterpriseTable(txtEnterSearch.getText()));
+        btnEnterDelete.addActionListener(evt -> deleteSelectedEnterprise());
+        btnEnterUpdate.addActionListener(evt -> toggleSelectedEnterpriseStatus());
+        btnEnterClear.addActionListener(evt -> clearEnterpriseForm());
+
+        cmbOragnization.addActionListener(evt -> populateRoleCombo(findOrganizationByName((String) cmbOragnization.getSelectedItem())));
+
+        tblUser.getSelectionModel().addListSelectionListener(this::handleUserSelectionChanged);
+        tblOrganization.getSelectionModel().addListSelectionListener(this::handleOrganizationSelectionChanged);
+        tblEnterprise.getSelectionModel().addListSelectionListener(this::handleEnterpriseSelectionChanged);
+    }
+
+    private void handleUserSelectionChanged(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int row = tblUser.getSelectedRow();
+            if (row >= 0 && row < displayedUsers.size()) {
+                selectedUserAccount = displayedUsers.get(row);
+                loadUserIntoForm(selectedUserAccount);
+            }
+        }
+    }
+
+    private void handleOrganizationSelectionChanged(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int row = tblOrganization.getSelectedRow();
+            if (row >= 0 && row < displayedOrganizations.size()) {
+                selectedOrganization = displayedOrganizations.get(row);
+                loadOrganizationIntoForm(selectedOrganization);
+            }
+        }
+    }
+
+    private void handleEnterpriseSelectionChanged(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int row = tblEnterprise.getSelectedRow();
+            if (row >= 0 && row < displayedEnterprises.size()) {
+                selectedEnterprise = displayedEnterprises.get(row);
+                loadEnterpriseIntoForm(selectedEnterprise);
+            }
+        }
+    }
+
+    private void populateAllTables() {
+        populateUserTable(null);
+        populateOrganizationTable(null);
+        populateEnterpriseTable(null);
+    }
+
+    private void populateUserTable(String searchText) {
+        displayedUsers.clear();
+        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+        model.setRowCount(0);
+
+        String keyword = normalize(searchText);
+
+        for (UserAccount account : ecosystem.getAllUserAccounts()) {
+            Employee employee = account.getEmployee();
+            String fullName = employee == null ? "" : employee.getName();
+            String email = employee == null ? "" : employee.getEmail();
+            String role = account.getRoleType() == null ? "" : account.getRoleType().getDisplayName();
+            String status = account.isActive() ? "Active" : "Inactive";
+            String searchable = normalize(account.getUsername() + " " + fullName + " " + email + " " + role + " " + status);
+
+            if (!keyword.isEmpty() && !searchable.contains(keyword)) {
+                continue;
+            }
+
+            displayedUsers.add(account);
+            model.addRow(new Object[]{
+                employee == null ? "-" : employee.getEmployeeId(),
+                fullName,
+                email,
+                role,
+                status
+            });
+        }
+    }
+
+    private void populateOrganizationTable(String searchText) {
+        displayedOrganizations.clear();
+        DefaultTableModel model = (DefaultTableModel) tblOrganization.getModel();
+        model.setRowCount(0);
+
+        String keyword = normalize(searchText);
+        int rowIndex = 1;
+
+        for (Organization organization : ecosystem.getOrganizationList()) {
+            Enterprise enterprise = ecosystem.findEnterpriseByOrganization(organization);
+            String searchable = normalize(
+                    organization.getName() + " "
+                    + organization.getType().getDisplayName() + " "
+                    + (enterprise == null ? "" : enterprise.getName()) + " "
+                    + (organization.isActive() ? "Active" : "Inactive")
+            );
+
+            if (!keyword.isEmpty() && !searchable.contains(keyword)) {
+                continue;
+            }
+
+            displayedOrganizations.add(organization);
+            model.addRow(new Object[]{
+                String.format("ORG-%03d", rowIndex++),
+                organization.getName(),
+                organization.isActive() ? "Active" : "Inactive",
+                LocalDate.now().toString()
+            });
+        }
+    }
+
+    private void populateEnterpriseTable(String searchText) {
+        displayedEnterprises.clear();
+        DefaultTableModel model = (DefaultTableModel) tblEnterprise.getModel();
+        model.setRowCount(0);
+
+        String keyword = normalize(searchText);
+
+        for (Enterprise enterprise : ecosystem.getEnterpriseList()) {
+            String searchable = normalize(
+                    enterprise.getName() + " "
+                    + enterprise.getType().getDisplayName() + " "
+                    + (enterprise.isActive() ? "Active" : "Inactive")
+            );
+
+            if (!keyword.isEmpty() && !searchable.contains(keyword)) {
+                continue;
+            }
+
+            displayedEnterprises.add(enterprise);
+            model.addRow(new Object[]{
+                enterprise.getName(),
+                enterprise.getType().getDisplayName(),
+                enterprise.isActive() ? "Active" : "Inactive",
+                LocalDate.now().toString()
+            });
+        }
+    }
+
+    private void populateOrganizationCombo() {
+        cmbOragnization.removeAllItems();
+        for (Organization organization : ecosystem.getOrganizationList()) {
+            cmbOragnization.addItem(organization.getName());
+        }
+    }
+
+    private void populateRoleCombo(Organization organization) {
+        cmbRole.removeAllItems();
+
+        if (organization != null && !organization.getSupportedRoles().isEmpty()) {
+            for (Role role : organization.getSupportedRoles()) {
+                cmbRole.addItem(role.getType().getDisplayName());
+            }
+            return;
+        }
+
+        for (RoleType roleType : RoleType.values()) {
+            cmbRole.addItem(roleType.getDisplayName());
+        }
+    }
+
+    private void loadSelectedUser() {
+        int row = tblUser.getSelectedRow();
+        if (row < 0 || row >= displayedUsers.size()) {
+            showMessage("Select a user to edit.");
+            return;
+        }
+        selectedUserAccount = displayedUsers.get(row);
+        loadUserIntoForm(selectedUserAccount);
+    }
+
+    private void loadSelectedOrganization() {
+        int row = tblOrganization.getSelectedRow();
+        if (row < 0 || row >= displayedOrganizations.size()) {
+            showMessage("Select an organization to edit.");
+            return;
+        }
+        selectedOrganization = displayedOrganizations.get(row);
+        loadOrganizationIntoForm(selectedOrganization);
+    }
+
+    private void loadUserIntoForm(UserAccount account) {
+        if (account == null) {
+            return;
+        }
+
+        Employee employee = account.getEmployee();
+        txtFirstName.setText(employee == null ? "" : employee.getFirstName());
+        txtLastName.setText(employee == null ? "" : employee.getLastName());
+        txtEmail.setText(employee == null ? "" : employee.getEmail());
+        txtPhone.setText(employee == null ? "" : employee.getPhone());
+        txtUsername.setText(account.getUsername());
+        txtPassword.setText(account.getPassword());
+
+        Organization organization = ecosystem.findOrganizationByUserAccount(account);
+        if (organization != null) {
+            cmbOragnization.setSelectedItem(organization.getName());
+            populateRoleCombo(organization);
+        }
+
+        if (account.getRoleType() != null) {
+            cmbRole.setSelectedItem(account.getRoleType().getDisplayName());
+        }
+        cmbEnterprise.setSelectedItem(account.isActive() ? "Active" : "Inactive");
+    }
+
+    private void loadOrganizationIntoForm(Organization organization) {
+        if (organization == null) {
+            return;
+        }
+
+        txtName.setText(organization.getName());
+        Enterprise enterprise = ecosystem.findEnterpriseByOrganization(organization);
+        txtEnterpriseOrg.setText(enterprise == null ? "" : enterprise.getName());
+        cmbStatus.setSelectedItem(organization.isActive() ? "Active" : "Inactive");
+    }
+
+    private void loadEnterpriseIntoForm(Enterprise enterprise) {
+        if (enterprise == null) {
+            return;
+        }
+
+        txtEnterName.setText(enterprise.getName());
+        txtEnterType.setText(enterprise.getType().getDisplayName());
+        cmbEnterStatus.setSelectedItem(enterprise.isActive() ? "Active" : "Inactive");
+    }
+
+    private void saveUser() {
+        String firstName = txtFirstName.getText().trim();
+        String lastName = txtLastName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String phone = txtPhone.getText().trim();
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword()).trim();
+        Organization organization = findOrganizationByName((String) cmbOragnization.getSelectedItem());
+        RoleType roleType = findRoleTypeByDisplayName((String) cmbRole.getSelectedItem());
+        boolean active = "Active".equalsIgnoreCase((String) cmbEnterprise.getSelectedItem());
+
+        if (firstName.isEmpty() || username.isEmpty() || password.isEmpty() || organization == null || roleType == null) {
+            showMessage("Please complete the user form before saving.");
+            return;
+        }
+
+        if (selectedUserAccount == null) {
+            if (!isUsernameUnique(username, null)) {
+                showMessage("Username already exists. Please use a different username.");
+                return;
+            }
+
+            Employee employee = organization.getEmployeeDirectory().createEmployee(firstName + " " + lastName);
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);
+            employee.setEmail(email);
+            employee.setPhone(phone);
+
+            UserAccount account = organization.getUserAccountDirectory().createUserAccount(username, password, employee, roleType);
+            account.setActive(active);
+            selectedUserAccount = account;
+            showMessage("User created successfully.");
+        } else {
+            if (!isUsernameUnique(username, selectedUserAccount)) {
+                showMessage("Username already exists. Please use a different username.");
+                return;
+            }
+
+            Organization currentOrganization = ecosystem.findOrganizationByUserAccount(selectedUserAccount);
+            if (currentOrganization != null && currentOrganization != organization) {
+                currentOrganization.getUserAccountDirectory().removeUserAccount(selectedUserAccount);
+                currentOrganization.getEmployeeDirectory().removeEmployee(selectedUserAccount.getEmployee());
+                organization.getEmployeeDirectory().addEmployee(selectedUserAccount.getEmployee());
+                organization.getUserAccountDirectory().addUserAccount(selectedUserAccount);
+            }
+
+            Employee employee = selectedUserAccount.getEmployee();
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);
+            employee.setEmail(email);
+            employee.setPhone(phone);
+
+            selectedUserAccount.setUsername(username);
+            selectedUserAccount.setPassword(password);
+            selectedUserAccount.setRoleType(roleType);
+            selectedUserAccount.setActive(active);
+            showMessage("User updated successfully.");
+        }
+
+        populateOrganizationCombo();
+        populateUserTable(txtSearch.getText());
+        clearUserForm();
+    }
+
+    private void deleteSelectedUser() {
+        if (selectedUserAccount == null) {
+            showMessage("Select a user to delete.");
+            return;
+        }
+
+        Organization organization = ecosystem.findOrganizationByUserAccount(selectedUserAccount);
+        if (organization != null) {
+            organization.getUserAccountDirectory().removeUserAccount(selectedUserAccount);
+            organization.getEmployeeDirectory().removeEmployee(selectedUserAccount.getEmployee());
+        }
+
+        showMessage("User deleted successfully.");
+        selectedUserAccount = null;
+        populateUserTable(txtSearch.getText());
+        clearUserForm();
+    }
+
+    private void toggleSelectedUserStatus() {
+        if (selectedUserAccount == null) {
+            showMessage("Select a user to update status.");
+            return;
+        }
+
+        selectedUserAccount.setActive(!selectedUserAccount.isActive());
+        populateUserTable(txtSearch.getText());
+        loadUserIntoForm(selectedUserAccount);
+        showMessage("User status updated.");
+    }
+
+    private void saveOrganization() {
+        String organizationName = txtName.getText().trim();
+        String enterpriseName = txtEnterpriseOrg.getText().trim();
+        Enterprise enterprise = ecosystem.findEnterpriseByName(enterpriseName);
+        boolean active = "Active".equalsIgnoreCase((String) cmbStatus.getSelectedItem());
+
+        if (organizationName.isEmpty() || enterprise == null) {
+            showMessage("Please enter an organization name and a valid enterprise name.");
+            return;
+        }
+
+        if (selectedOrganization == null) {
+            OrganizationType organizationType = inferOrganizationType(enterprise, organizationName, null);
+            Organization organization = enterprise.getOrganizationDirectory().createAndAddOrganization(organizationName, organizationType);
+            organization.setActive(active);
+            ecosystem.addOrganization(organization);
+            selectedOrganization = organization;
+            showMessage("Organization created successfully.");
+        } else {
+            Enterprise currentEnterprise = ecosystem.findEnterpriseByOrganization(selectedOrganization);
+            if (currentEnterprise != null && currentEnterprise != enterprise) {
+                currentEnterprise.removeOrganization(selectedOrganization);
+                enterprise.addOrganization(selectedOrganization);
+            }
+            selectedOrganization.setName(organizationName);
+            selectedOrganization.setActive(active);
+            showMessage("Organization updated successfully.");
+        }
+
+        populateOrganizationCombo();
+        populateOrganizationTable(txtSearchOrg.getText());
+        clearOrganizationForm();
+    }
+
+    private void deleteSelectedOrganization() {
+        if (selectedOrganization == null) {
+            showMessage("Select an organization to delete.");
+            return;
+        }
+
+        Enterprise enterprise = ecosystem.findEnterpriseByOrganization(selectedOrganization);
+        if (enterprise != null) {
+            enterprise.removeOrganization(selectedOrganization);
+        }
+        ecosystem.getOrganizationList().remove(selectedOrganization);
+
+        showMessage("Organization deleted successfully.");
+        selectedOrganization = null;
+        populateOrganizationCombo();
+        populateOrganizationTable(txtSearchOrg.getText());
+        clearOrganizationForm();
+    }
+
+    private void toggleSelectedOrganizationStatus() {
+        if (selectedOrganization == null) {
+            showMessage("Select an organization to update status.");
+            return;
+        }
+
+        selectedOrganization.setActive(!selectedOrganization.isActive());
+        populateOrganizationTable(txtSearchOrg.getText());
+        loadOrganizationIntoForm(selectedOrganization);
+        showMessage("Organization status updated.");
+    }
+
+    private void saveEnterprise() {
+        String name = txtEnterName.getText().trim();
+        EnterpriseType type = parseEnterpriseType(txtEnterType.getText().trim());
+        boolean active = "Active".equalsIgnoreCase((String) cmbEnterStatus.getSelectedItem());
+
+        if (name.isEmpty() || type == null) {
+            showMessage("Please enter a valid enterprise name and enterprise type.");
+            return;
+        }
+
+        if (selectedEnterprise == null) {
+            Enterprise enterprise = createEnterprise(name, type);
+            ecosystem.addEnterprise(enterprise);
+            enterprise.setActive(active);
+            selectedEnterprise = enterprise;
+            showMessage("Enterprise created successfully.");
+        } else {
+            selectedEnterprise.setName(name);
+            selectedEnterprise.setType(type);
+            selectedEnterprise.setActive(active);
+            showMessage("Enterprise updated successfully.");
+        }
+
+        populateEnterpriseTable(txtEnterSearch.getText());
+        clearEnterpriseForm();
+    }
+
+    private void deleteSelectedEnterprise() {
+        if (selectedEnterprise == null) {
+            showMessage("Select an enterprise to delete.");
+            return;
+        }
+
+        ecosystem.getEnterpriseList().remove(selectedEnterprise);
+        ecosystem.getOrganizationList().removeAll(new ArrayList<>(selectedEnterprise.getOrganization()));
+
+        showMessage("Enterprise deleted successfully.");
+        selectedEnterprise = null;
+        populateOrganizationCombo();
+        populateOrganizationTable(txtSearchOrg.getText());
+        populateEnterpriseTable(txtEnterSearch.getText());
+        clearEnterpriseForm();
+    }
+
+    private void toggleSelectedEnterpriseStatus() {
+        if (selectedEnterprise == null) {
+            showMessage("Select an enterprise to update status.");
+            return;
+        }
+
+        selectedEnterprise.setActive(!selectedEnterprise.isActive());
+        populateEnterpriseTable(txtEnterSearch.getText());
+        loadEnterpriseIntoForm(selectedEnterprise);
+        showMessage("Enterprise status updated.");
+    }
+
+    private void clearUserForm() {
+        txtFirstName.setText("");
+        txtLastName.setText("");
+        txtEmail.setText("");
+        txtPhone.setText("");
+        txtUsername.setText("");
+        txtPassword.setText("");
+        if (cmbOragnization.getItemCount() > 0) {
+            cmbOragnization.setSelectedIndex(0);
+        }
+        populateRoleCombo(findOrganizationByName((String) cmbOragnization.getSelectedItem()));
+        if (cmbRole.getItemCount() > 0) {
+            cmbRole.setSelectedIndex(0);
+        }
+        cmbEnterprise.setSelectedItem("Active");
+        tblUser.clearSelection();
+        selectedUserAccount = null;
+    }
+
+    private void clearOrganizationForm() {
+        txtName.setText("");
+        txtEnterpriseOrg.setText("");
+        cmbStatus.setSelectedItem("Active");
+        tblOrganization.clearSelection();
+        selectedOrganization = null;
+    }
+
+    private void clearEnterpriseForm() {
+        txtEnterName.setText("");
+        txtEnterType.setText("");
+        cmbEnterStatus.setSelectedItem("Active");
+        tblEnterprise.clearSelection();
+        selectedEnterprise = null;
+    }
+
+    private Organization findOrganizationByName(String organizationName) {
+        if (organizationName == null) {
+            return null;
+        }
+
+        for (Organization organization : ecosystem.getOrganizationList()) {
+            if (organization.getName().equalsIgnoreCase(organizationName)) {
+                return organization;
+            }
+        }
+        return null;
+    }
+
+    private boolean isUsernameUnique(String username, UserAccount currentAccount) {
+        for (UserAccount account : ecosystem.getAllUserAccounts()) {
+            if (account != currentAccount && account.getUsername().equalsIgnoreCase(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private RoleType findRoleTypeByDisplayName(String displayName) {
+        if (displayName == null) {
+            return null;
+        }
+
+        for (RoleType roleType : RoleType.values()) {
+            if (roleType.getDisplayName().equalsIgnoreCase(displayName)) {
+                return roleType;
+            }
+        }
+        return null;
+    }
+
+    private EnterpriseType parseEnterpriseType(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        String normalized = normalize(value);
+        for (EnterpriseType type : EnterpriseType.values()) {
+            if (normalize(type.getDisplayName()).equals(normalized)
+                    || normalize(type.name()).equals(normalized)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    private OrganizationType inferOrganizationType(Enterprise enterprise, String organizationName, Organization currentOrganization) {
+        if (currentOrganization != null) {
+            return currentOrganization.getType();
+        }
+
+        String normalized = normalize(organizationName);
+        if (normalized.contains("interactive")) {
+            return OrganizationType.INTERACTIVE_ENTERTAINMENT;
+        }
+        if (normalized.contains("game") || normalized.contains("studio")) {
+            return OrganizationType.GAME_DEV_STUDIO;
+        }
+        if (normalized.contains("supplier") || normalized.contains("component")) {
+            return OrganizationType.COMPONENT_SUPPLIER;
+        }
+        if (normalized.contains("manufact")) {
+            return OrganizationType.MANUFACTURING_PARTNER;
+        }
+        if (normalized.contains("retail")) {
+            return OrganizationType.RETAILER;
+        }
+        if (normalized.contains("online") || normalized.contains("service")) {
+            return OrganizationType.ONLINE_SERVICE_PROVIDER;
+        }
+
+        switch (enterprise.getType()) {
+            case DIGITAL_ENTERTAINMENT:
+                return OrganizationType.INTERACTIVE_ENTERTAINMENT;
+            case HARDWARE_AND_SUPPLY_CHAIN:
+                return OrganizationType.COMPONENT_SUPPLIER;
+            case PARTNER_AND_SERVICE:
+                return OrganizationType.RETAILER;
+            default:
+                return OrganizationType.INTERACTIVE_ENTERTAINMENT;
+        }
+    }
+
+    private Enterprise createEnterprise(String name, EnterpriseType type) {
+        switch (type) {
+            case DIGITAL_ENTERTAINMENT:
+                return new DigitalEntertainment(name);
+            case HARDWARE_AND_SUPPLY_CHAIN:
+                return new HardwareAndSupplyChain(name);
+            case PARTNER_AND_SERVICE:
+                return new PartnerAndService(name);
+            default:
+                throw new IllegalArgumentException("Unsupported enterprise type: " + type);
+        }
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim().toLowerCase();
+    }
+
+    private void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
     private void btnSaveorgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveorgActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSaveorgActionPerformed
@@ -732,6 +1434,26 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
     private void btnEnterSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterSaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEnterSaveActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnActiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActiveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnActiveActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSearchActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -811,4 +1533,5 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtSearchOrg;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
 }

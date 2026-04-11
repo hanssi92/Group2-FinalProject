@@ -12,11 +12,65 @@ import Business.Organization.Organization;
  */
 public class ContentPublishingRequest extends WorkRequest {
     
+    private String requestId;
+    private String submittedBy;
+    private String contentType;
+    private String priority;
+    
     public ContentPublishingRequest() {
         super();
     }
 
     public ContentPublishingRequest(String title, Organization senderOrganization, Organization receiverOrganization, String message) {
-        initialize(title, senderOrganization, receiverOrganization, message);
+        super(title, senderOrganization, receiverOrganization, message);
+    }
+
+    public ContentPublishingRequest(
+            String title,
+            Organization senderOrganization,
+            Organization receiverOrganization,
+            String message,
+            String requestId,
+            String submittedBy,
+            String contentType,
+            String priority) {
+        super(title, senderOrganization, receiverOrganization, message);
+        this.requestId = requestId;
+        this.submittedBy = submittedBy;
+        this.contentType = contentType;
+        this.priority = priority;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getSubmittedBy() {
+        return submittedBy;
+    }
+
+    public void setSubmittedBy(String submittedBy) {
+        this.submittedBy = submittedBy;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }
+

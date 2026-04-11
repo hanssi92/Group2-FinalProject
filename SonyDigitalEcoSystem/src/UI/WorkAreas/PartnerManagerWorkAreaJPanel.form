@@ -375,39 +375,45 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="229" max="-2" attributes="0"/>
+                          <Component id="btnSave" min="-2" pref="88" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnUpdate1" min="-2" pref="88" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnLogout" min="-2" pref="88" max="-2" attributes="0"/>
+                          <EmptySpace pref="234" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="248" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="lblPhone" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="lblOrganization" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblRole" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblName" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblEnterprise" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblEmail" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblStatus" alignment="1" min="-2" pref="72" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="lblRole" min="-2" pref="72" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="txtName" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtRole" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtOrganization" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtEnterprise" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtEmail" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtStatus" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtPhone" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="txtRole" min="-2" pref="152" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="229" max="-2" attributes="0"/>
-                                  <Component id="btnSave" min="-2" pref="88" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="lblId" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="lblName" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="lblOrganization" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lblEnterprise" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                      <Component id="lblEmail" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                      <Component id="lblPhone" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="btnUpdate1" min="-2" pref="88" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="btnLogout" min="-2" pref="88" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="txtId" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="txtName" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="txtEnterprise" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="txtOrganization" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="txtPhone" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="txtEmail" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
-                          <EmptySpace pref="234" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="256" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -421,95 +427,46 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblId" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtId" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblRole" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtRole" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblOrganization" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtOrganization" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblEnterprise" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEnterprise" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="txtEnterprise" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblEnterprise" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblEmail" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEmail" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblEmail" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtEmail" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblStatus" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtStatus" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnSave" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnUpdate1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnLogout" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="94" max="32767" attributes="0"/>
+                          <EmptySpace pref="97" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="lblName">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Name:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtName">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblRole">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Role:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtRole">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblOrganization">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Organization:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtOrganization">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblEnterprise">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Enterprise:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEnterprise">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblEmail">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Email:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEmail">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblPhone">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Phone:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtPhone">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblStatus">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Status"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtStatus">
-                </Component>
                 <Component class="javax.swing.JButton" name="btnSave">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -548,6 +505,55 @@
                       </Border>
                     </Property>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblName">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Name:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtName">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblId">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Employee ID"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtId">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblRole">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Role:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtRole">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblOrganization">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Organization:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtOrganization">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblEnterprise">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Enterprise:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtEnterprise">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblEmail">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Email:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtEmail">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblPhone">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Phone:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtPhone">
                 </Component>
               </SubComponents>
             </Container>
