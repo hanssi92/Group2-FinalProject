@@ -74,8 +74,8 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="All Open Tickets">
-                <Property name="tabTitle" type="java.lang.String" value="All Open Tickets"/>
+              <JTabbedPaneConstraints tabName="Support Request">
+                <Property name="tabTitle" type="java.lang.String" value="Support Request"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -106,13 +106,15 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="lblRequestStatistic" alignment="0" pref="772" max="32767" attributes="0"/>
                       <Component id="ApprovalPanel" alignment="0" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="btnRequest" min="-2" pref="100" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnConfirm" min="-2" pref="120" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnCreate" min="-2" pref="125" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="btnRequestDash" min="-2" pref="140" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -129,6 +131,7 @@
                               <Component id="btnRequest" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnConfirm" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnCreate" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnRequestDash" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="37" max="32767" attributes="0"/>
                       </Group>
@@ -256,6 +259,19 @@
                       <Color blue="cc" green="cc" red="cc" type="rgb"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="View Details"/>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
+                        <BevelBorder/>
+                      </Border>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="btnRequestDash">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Request Dashboard"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                         <BevelBorder/>

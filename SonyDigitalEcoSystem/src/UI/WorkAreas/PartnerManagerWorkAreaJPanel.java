@@ -12,7 +12,9 @@ import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
 import Business.WorkQueue.WorkRequest;
+import Business.WorkQueue.WorkRequestStatus;
 import UI.MainFrame;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -26,6 +28,8 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     
     private final SonyEcoSystem ecosystem;
     private final UserAccount account;
+    private final ArrayList<WorkRequest> displayedRequests;
+
 
 
     /**
@@ -39,6 +43,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     public PartnerManagerWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
         this.ecosystem = ecosystem;
         this.account = account;
+        this.displayedRequests = new ArrayList<>();
         initComponents();
         initializePartnerPanel();
     }
@@ -438,12 +443,37 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     private void populatePartnerRequests() {
         DefaultTableModel model = (DefaultTableModel) tblWorkRequest.getModel();
         model.setRowCount(0);
-        model.addRow(new Object[]{"PR-1001", "API Access Request", "Sony Electronics", "Sony Digital Ecosystem", "Pending"});
-        model.addRow(new Object[]{"PR-1002", "Data Sharing Agreement", "Sony Pictures", "Sony Digital Ecosystem", "Approved"});
-        model.addRow(new Object[]{"PR-1003", "Cloud Services Integration", "Sony Interactive Entertainment", "Sony Digital Ecosystem", "In Review"});
-        lblActivityPartner.setText("Active Partners: 5");
-        lblPendingAssign.setText("Pending Agreements: 3");
-        lblCrossRequest.setText("Cross-Enterprise Requests: 7");
+        displayedRequests.clear();
+
+        Organization currentOrganization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+
+        if (ecosystem != null && currentOrganization != null) {
+            for (WorkRequest request : ecosystem.getWorkRequests()) {
+                Organization senderOrganization = request.getSenderOrganization();
+                Organization receiverOrganization = request.getReceiverOrganization();
+
+                if (senderOrganization != currentOrganization && receiverOrganization != currentOrganization) {
+                    continue;
+                }
+
+                displayedRequests.add(request);
+                model.addRow(new Object[]{
+                    defaultValue(request.getRequestId(), "PR-" + String.format("%04d", displayedRequests.size())),
+                    defaultValue(request.getTitle(), "(Untitled Request)"),
+                    getEnterpriseName(senderOrganization),
+                    getEnterpriseName(receiverOrganization),
+                    formatWorkRequestStatus(request.getStatus())
+                });
+            }
+        }
+
+        if (model.getRowCount() == 0) {
+            model.addRow(new Object[]{"PR-1001", "API Access Request", "Sony Electronics", "Sony Digital Ecosystem", "Pending"});
+            model.addRow(new Object[]{"PR-1002", "Data Sharing Agreement", "Sony Pictures", "Sony Digital Ecosystem", "Approved"});
+            model.addRow(new Object[]{"PR-1003", "Cloud Services Integration", "Sony Interactive Entertainment", "Sony Digital Ecosystem", "In Review"});
+        }
+
+        refreshPartnerStats();
     }
 
     private void updateSelectedPartnerStatus(String status) {
@@ -452,7 +482,15 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Select a request first.");
             return;
         }
+
+        if (selectedRow < displayedRequests.size()) {
+            displayedRequests.get(selectedRow).setStatus(parseStatus(status));
+            populatePartnerRequests();
+            return;
+        }
+
         tblWorkRequest.setValueAt(status, selectedRow, 4);
+        refreshPartnerStats();
     }
 
     private void openCreateRequestForm() {
@@ -495,6 +533,12 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
                     targetOrganization,
                     data.getDescription()
             );
+            workRequest.setRequestId(data.getRequestId());
+            workRequest.setPriority(data.getPriority());
+            workRequest.setDueDate(data.getDueDate());
+            workRequest.setAssignedTo(data.getAssignedTo());
+            workRequest.setRequestType(data.getRequestType());
+            workRequest.setStatus(WorkRequestStatus.PENDING);
             ecosystem.addWorkRequest(workRequest);
             if (senderOrganization != null) {
                 senderOrganization.addWorkRequest(workRequest);
@@ -504,7 +548,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
             }
         }
 
-        refreshPartnerStats();
+        populatePartnerRequests();
     }
 
     private void refreshPartnerStats() {
@@ -518,6 +562,54 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         lblActivityPartner.setText("Active Partners: " + tblWorkRequest.getRowCount());
         lblPendingAssign.setText("Pending Agreements: " + pending);
         lblCrossRequest.setText("Cross-Enterprise Requests: " + tblWorkRequest.getRowCount());
+    }
+
+    private String getEnterpriseName(Organization organization) {
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+        return enterprise != null ? enterprise.getName() : "";
+    }
+
+    private String formatWorkRequestStatus(WorkRequestStatus status) {
+        if (status == null) {
+            return "Pending";
+        }
+
+        String raw = status.name().toLowerCase().replace('_', ' ');
+        String[] words = raw.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+        }
+        return builder.toString();
+    }
+
+    private WorkRequestStatus parseStatus(String statusText) {
+        if (statusText == null) {
+            return WorkRequestStatus.PENDING;
+        }
+
+        switch (statusText.trim().toLowerCase()) {
+            case "approved":
+                return WorkRequestStatus.APPROVED;
+            case "rejected":
+                return WorkRequestStatus.REJECTED;
+            case "completed":
+                return WorkRequestStatus.COMPLETED;
+            case "new":
+                return WorkRequestStatus.NEW;
+            default:
+                return WorkRequestStatus.PENDING;
+        }
+    }
+
+    private String defaultValue(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
     }
 
     private MainFrame findMainFrame() {

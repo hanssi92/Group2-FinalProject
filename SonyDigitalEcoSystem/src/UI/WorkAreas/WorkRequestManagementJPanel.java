@@ -7,6 +7,7 @@ package UI.WorkAreas;
 import Business.DataGenerator;
 import Business.Model.Order;
 import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
 import Business.WorkQueue.ContentPublishingRequest;
 import Business.WorkQueue.WorkRequest;
 import Business.WorkQueue.WorkRequestStatus;
@@ -22,19 +23,24 @@ import javax.swing.table.DefaultTableModel;
  */
 public class WorkRequestManagementJPanel extends javax.swing.JPanel {
     private final SonyEcoSystem ecosystem;
+    private final MainFrame mainFrame;
+    private final UserAccount account;
+    private final javax.swing.JPanel returnPanel;
     private final ArrayList<DashboardEntry> dashboardEntries;
     private boolean dirty;
-
 
     /**
      * Creates new form WorkRequestManagementJPanel
      */
-    public WorkRequestManagementJPanel() {
-        this(DataGenerator.createSeededEcosystem());
-    }
-
     public WorkRequestManagementJPanel(SonyEcoSystem ecosystem) {
+        this(null, DataGenerator.createSeededEcosystem(), null, null);
+    }
+   
+    public WorkRequestManagementJPanel(MainFrame mainFrame, SonyEcoSystem ecosystem, UserAccount account, javax.swing.JPanel returnPanel) {
+        this.mainFrame = mainFrame;
         this.ecosystem = ecosystem;
+        this.account = account;
+        this.returnPanel = returnPanel;
         this.dashboardEntries = new ArrayList<>();
         initComponents();
         initializeDashboard();
@@ -59,9 +65,7 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblDashBoard = new javax.swing.JTable();
         btnBack = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
         btnConfirm = new javax.swing.JButton();
-        btnCreate = new javax.swing.JButton();
         btnRequest1 = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
 
@@ -73,39 +77,43 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
         StatusPanel.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
 
         lblTotalPending.setBackground(new java.awt.Color(204, 204, 204));
+        lblTotalPending.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTotalPending.setText("Total Pending:");
         lblTotalPending.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblTotalPending.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblTotalPending.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         lblTotalCross.setBackground(new java.awt.Color(204, 204, 204));
+        lblTotalCross.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTotalCross.setText("Cross-Enterprise:");
         lblTotalCross.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblTotalCross.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblTotalCross.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         lblTotalComplete.setBackground(new java.awt.Color(204, 204, 204));
+        lblTotalComplete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTotalComplete.setText("Total Completed:");
         lblTotalComplete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblTotalComplete.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblTotalComplete.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         lblTotalRequest.setBackground(new java.awt.Color(204, 204, 204));
+        lblTotalRequest.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTotalRequest.setText("Total Request: ");
         lblTotalRequest.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblTotalRequest.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblTotalRequest.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout StatusPanelLayout = new javax.swing.GroupLayout(StatusPanel);
         StatusPanel.setLayout(StatusPanelLayout);
         StatusPanelLayout.setHorizontalGroup(
             StatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(StatusPanelLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
                 .addComponent(lblTotalRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(lblTotalPending, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblTotalCross, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(33, 33, 33)
                 .addComponent(lblTotalComplete, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         StatusPanelLayout.setVerticalGroup(
             StatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,9 +121,9 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(StatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTotalPending, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblTotalCross, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(lblTotalComplete, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(lblTotalRequest, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
+                    .addComponent(lblTotalCross, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                    .addComponent(lblTotalComplete, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                    .addComponent(lblTotalRequest, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -153,7 +161,7 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
             ApprovalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ApprovalPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ApprovalPanelLayout.setVerticalGroup(
@@ -173,17 +181,9 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
             }
         });
 
-        btnSave.setBackground(new java.awt.Color(204, 204, 204));
-        btnSave.setText("Save");
-        btnSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         btnConfirm.setBackground(new java.awt.Color(204, 204, 204));
         btnConfirm.setText("Delete");
         btnConfirm.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        btnCreate.setBackground(new java.awt.Color(204, 204, 204));
-        btnCreate.setText("Edit");
-        btnCreate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         btnRequest1.setBackground(new java.awt.Color(204, 204, 204));
         btnRequest1.setText("View Details");
@@ -206,14 +206,11 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
                     .addComponent(ApprovalPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(193, 193, 193)
                         .addComponent(btnRequest1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(btnConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitle)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -231,28 +228,28 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirm)
-                    .addComponent(btnCreate)
                     .addComponent(btnBack)
-                    .addComponent(btnRequest1)
-                    .addComponent(btnSave))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(btnRequest1))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         // TODO add your handling code here:
-        MainFrame mainFrame = findMainFrame();
-        if (mainFrame != null) {
-            mainFrame.showLoginScreen();
+        MainFrame frame = mainFrame != null ? mainFrame : findMainFrame();
+        if (frame != null && returnPanel != null && account != null) {
+            frame.showRoleDashboard(account, returnPanel);
+            return;
+        }
+        if (frame != null) {
+            frame.showLoginScreen();
         }
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void initializeDashboard() {
         populateDashboardTable();
         btnRequest1.addActionListener(evt -> showSelectedDetails());
-        btnCreate.addActionListener(evt -> editSelectedRequest());
         btnConfirm.addActionListener(evt -> deleteSelectedRequest());
-        btnSave.addActionListener(evt -> saveDashboardChanges());
     }
 
     private void populateDashboardTable() {
@@ -528,9 +525,7 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
     private javax.swing.JPanel StatusPanel;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnConfirm;
-    private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnRequest1;
-    private javax.swing.JButton btnSave;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTotalComplete;

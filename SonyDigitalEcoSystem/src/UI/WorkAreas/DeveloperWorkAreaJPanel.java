@@ -442,9 +442,45 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
     private void populateDeveloperRequests() {
         DefaultTableModel model = (DefaultTableModel) tblRequest.getModel();
         model.setRowCount(0);
-        model.addRow(new Object[]{"WR-1001", "Gameplay Balancing Notes", "Interactive Entertainment", "Pending", "High", "2026-04-18"});
-        model.addRow(new Object[]{"WR-1002", "Publish Patch Summary", "Content Manager", "In Review", "Medium", "2026-04-15"});
-        model.addRow(new Object[]{"WR-1003", "Trailer Asset Approval", "Interactive Entertainment", "Completed", "Low", "2026-04-10"});
+        Organization currentOrganization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+
+        if (ecosystem != null && currentOrganization != null) {
+            for (WorkRequest workRequest : ecosystem.getWorkRequests()) {
+                boolean relatedToCurrentOrganization =
+                        workRequest.getSenderOrganization() == currentOrganization
+                        || workRequest.getReceiverOrganization() == currentOrganization;
+                if (!relatedToCurrentOrganization) {
+                    continue;
+                }
+
+                String requestId = workRequest.getRequestId() != null && !workRequest.getRequestId().isBlank()
+                        ? workRequest.getRequestId()
+                        : "WR-" + String.format("%04d", model.getRowCount() + 1);
+                String targetOrganizationName = workRequest.getReceiverOrganization() != null
+                        ? workRequest.getReceiverOrganization().getName()
+                        : "";
+                String status = formatWorkRequestStatus(workRequest.getStatus());
+                String priority = workRequest.getPriority() != null && !workRequest.getPriority().isBlank()
+                        ? workRequest.getPriority()
+                        : "Medium";
+                String dueDate = workRequest.getDueDate() != null ? workRequest.getDueDate() : "";
+
+                model.addRow(new Object[]{
+                    requestId,
+                    workRequest.getTitle(),
+                    targetOrganizationName,
+                    status,
+                    priority,
+                    dueDate
+                });
+            }
+        }
+
+        if (model.getRowCount() == 0) {
+            model.addRow(new Object[]{"WR-1001", "Gameplay Balancing Notes", "Interactive Entertainment", "Pending", "High", "2026-04-18"});
+            model.addRow(new Object[]{"WR-1002", "Publish Patch Summary", "Content Manager", "In Review", "Medium", "2026-04-15"});
+            model.addRow(new Object[]{"WR-1003", "Trailer Asset Approval", "Interactive Entertainment", "Completed", "Low", "2026-04-10"});
+        }
         refreshDeveloperStats();
     }
 
@@ -500,6 +536,11 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
                     targetOrganization,
                     data.getDescription()
             );
+            workRequest.setRequestId(data.getRequestId());
+            workRequest.setPriority(data.getPriority());
+            workRequest.setDueDate(data.getDueDate());
+            workRequest.setAssignedTo(data.getAssignedTo());
+            workRequest.setRequestType(data.getRequestType());
             ecosystem.addWorkRequest(workRequest);
             if (senderOrganization != null) {
                 senderOrganization.addWorkRequest(workRequest);
@@ -528,6 +569,27 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         lblActivityProject.setText("Active Project: " + active);
         lblPendingRequest.setText("Pending Requests: " + pending);
         lblCompleted.setText("Completed: " + completed);
+    }
+
+    private String formatWorkRequestStatus(Business.WorkQueue.WorkRequestStatus status) {
+        if (status == null) {
+            return "Pending";
+        }
+
+        String raw = status.name().toLowerCase().replace('_', ' ');
+        String[] parts = raw.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(part.charAt(0)))
+                    .append(part.substring(1));
+        }
+        return builder.toString();
     }
 
     private MainFrame findMainFrame() {

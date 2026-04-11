@@ -10,6 +10,8 @@ import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
 import UI.MainFrame;
+import java.awt.event.ActionListener;
+import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -277,11 +279,20 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
             return;
         }
 
+        LinkedHashSet<String> enterpriseNames = new LinkedHashSet<>();
         for (Enterprise enterprise : ecosystem.getEnterpriseList()) {
-            cmbSourceEnterprise.addItem(enterprise.getName());
-            cmbTargetEnt.addItem(enterprise.getName());
+            if (enterprise != null && enterprise.getName() != null && !enterprise.getName().isBlank()) {
+                enterpriseNames.add(enterprise.getName().trim());
+            }
         }
 
+        for (String enterpriseName : enterpriseNames) {
+            cmbSourceEnterprise.addItem(enterpriseName);
+            cmbTargetEnt.addItem(enterpriseName);
+        }
+
+        clearComboListeners(cmbSourceEnterprise);
+        clearComboListeners(cmbTargetEnt);
         cmbSourceEnterprise.addActionListener(evt -> populateOrganizationCombo(cmbSourceEnterprise, cmbSourceOrg));
         cmbTargetEnt.addActionListener(evt -> populateOrganizationCombo(cmbTargetEnt, cmbTargetOrg));
 
@@ -307,8 +318,15 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
             return;
         }
 
+        LinkedHashSet<String> organizationNames = new LinkedHashSet<>();
         for (Organization organization : enterprise.getOrganization()) {
-            organizationCombo.addItem(organization.getName());
+            if (organization != null && organization.getName() != null && !organization.getName().isBlank()) {
+                organizationNames.add(organization.getName().trim());
+            }
+        }
+
+        for (String organizationName : organizationNames) {
+            organizationCombo.addItem(organizationName);
         }
     }
 
@@ -390,6 +408,13 @@ public class CreateNewWorkRequest extends javax.swing.JPanel {
             mainFrame.showRoleDashboard(account, returnPanel);
         }
     }
+
+    private void clearComboListeners(javax.swing.JComboBox<String> comboBox) {
+        for (ActionListener listener : comboBox.getActionListeners()) {
+            comboBox.removeActionListener(listener);
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;

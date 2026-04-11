@@ -433,6 +433,11 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
                     targetOrganization,
                     data.getDescription()
             );
+            workRequest.setRequestId(data.getRequestId());
+            workRequest.setPriority(data.getPriority());
+            workRequest.setDueDate(data.getDueDate());
+            workRequest.setAssignedTo(data.getAssignedTo());
+            workRequest.setRequestType(data.getRequestType());
             ecosystem.addWorkRequest(workRequest);
             if (senderOrganization != null) {
                 senderOrganization.addWorkRequest(workRequest);
@@ -466,6 +471,7 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
                 + "-"
                 + String.format("%03d", employee.getEmployeeId());
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane MyTicketTab;
