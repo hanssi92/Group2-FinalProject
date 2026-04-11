@@ -4,6 +4,7 @@
  */
 package UI.WorkAreas;
 
+import Business.WorkSpace.WorkRequestFormData;
 import Business.DataGenerator;
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
@@ -63,7 +64,6 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnUpdate1 = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         lblId = new javax.swing.JLabel();
@@ -89,10 +89,10 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         MyTicketTab.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
         MyTicketTab.setInheritsPopupMenu(true);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Ticket Lists", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -192,10 +192,6 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate1.setText("Update");
         btnUpdate1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         lblName.setText("Name:");
 
         lblId.setText("Employee ID");
@@ -216,13 +212,6 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(229, 229, 229)
-                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(267, 267, 267)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,8 +235,13 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
                                     .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(247, Short.MAX_VALUE))
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(289, 289, 289)
+                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(267, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,12 +274,11 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPhone)
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
-                    .addComponent(btnUpdate1)
-                    .addComponent(btnLogout))
-                .addContainerGap(100, Short.MAX_VALUE))
+                    .addComponent(btnUpdate1))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
 
         ProfileTab.addTab("My Information", jPanel3);
@@ -320,6 +313,8 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         populateTickets();
         btnview.addActionListener(evt -> showSelectedTableDetails(tblTicketList, "Ticket Details"));
         btnNew.addActionListener(evt -> openCreateRequestForm());
+        btnUpdate1.addActionListener(evt -> enableProfileEditing());
+        btnSave.addActionListener(evt -> saveProfileChanges());
     }
 
     private void populateMyProfileTab() {
@@ -333,7 +328,7 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtId.setText(formatEmployeeId(employee));
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -351,6 +346,26 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         txtEmail.setEditable(false);
         txtPhone.setEditable(false);
         txtId.setEditable(false);
+    }
+
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
+
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
+
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
     }
 
     private void populateTickets() {
@@ -436,10 +451,25 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         return null;
     }
 
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
+    }
+
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane MyTicketTab;
     private javax.swing.JTabbedPane ProfileTab;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate1;

@@ -98,10 +98,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         lblSearch = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnSearch = new javax.swing.JButton();
-        btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
-        btnActive = new javax.swing.JButton();
         OrgTab = new javax.swing.JTabbedPane();
         jSplitPane1 = new javax.swing.JSplitPane();
         OrgLeftPanel = new javax.swing.JPanel();
@@ -111,18 +109,16 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnAddOrg = new javax.swing.JButton();
         lblSearchOrg = new javax.swing.JLabel();
         txtSearchOrg = new javax.swing.JTextField();
-        btnEditOrg = new javax.swing.JButton();
         btnDeleteOrg = new javax.swing.JButton();
-        btnUpdateOrg = new javax.swing.JButton();
         OrgRightPanel = new javax.swing.JPanel();
         lblOrgName = new javax.swing.JLabel();
         lblEnterpriseOrg = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         txtEnterpriseOrg = new javax.swing.JTextField();
-        btnSaveorg = new javax.swing.JButton();
         btnClearOrg = new javax.swing.JButton();
         cmbStatus = new javax.swing.JComboBox<>();
+        btnUpdateOrg = new javax.swing.JButton();
         EnterpriseTab = new javax.swing.JTabbedPane();
         jSplitPane3 = new javax.swing.JSplitPane();
         EnterLeftPanel = new javax.swing.JPanel();
@@ -131,9 +127,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         lblEnterSearch = new javax.swing.JLabel();
         txtEnterSearch = new javax.swing.JTextField();
         btnEnterSearch = new javax.swing.JButton();
-        btnEnterEdit = new javax.swing.JButton();
         btnEnterDelete = new javax.swing.JButton();
-        btnEnterUpdate = new javax.swing.JButton();
+        btnAddOrg1 = new javax.swing.JButton();
         EnterRightPanel = new javax.swing.JPanel();
         lblEnterName = new javax.swing.JLabel();
         lblEnterType = new javax.swing.JLabel();
@@ -141,8 +136,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterName = new javax.swing.JTextField();
         txtEnterType = new javax.swing.JTextField();
         cmbEnterStatus = new javax.swing.JComboBox<>();
-        btnEnterSave = new javax.swing.JButton();
         btnEnterClear = new javax.swing.JButton();
+        btnEnterUpdate = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 204, 204));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -186,6 +181,11 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnSave.setBackground(new java.awt.Color(204, 204, 204));
         btnSave.setText("Save");
         btnSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnClear.setBackground(new java.awt.Color(204, 204, 204));
         btnClear.setText("Clear");
@@ -197,38 +197,35 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RightPanelLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(RightPanelLayout.createSequentialGroup()
-                        .addComponent(lblFirstName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
-                        .addComponent(txtFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(RightPanelLayout.createSequentialGroup()
-                        .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblOrganization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblLastName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEnterprise, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtLastName)
-                            .addComponent(txtEmail)
-                            .addComponent(txtPhone)
-                            .addComponent(txtUsername)
-                            .addComponent(txtPassword)
-                            .addComponent(cmbRole, 0, 136, Short.MAX_VALUE)
-                            .addComponent(cmbOragnization, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cmbEnterprise, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(lblOrganization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblLastName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblEnterprise, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblFirstName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtFirstName, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                    .addComponent(txtLastName, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtPhone, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmbRole, javax.swing.GroupLayout.Alignment.LEADING, 0, 136, Short.MAX_VALUE)
+                    .addComponent(cmbOragnization, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cmbEnterprise, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(33, 33, 33))
             .addGroup(RightPanelLayout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         RightPanelLayout.setVerticalGroup(
             RightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,15 +311,6 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             }
         });
 
-        btnAdd.setBackground(new java.awt.Color(204, 204, 204));
-        btnAdd.setText("Add");
-        btnAdd.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-
         btnEdit.setBackground(new java.awt.Color(204, 204, 204));
         btnEdit.setText("Edit");
         btnEdit.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -341,43 +329,28 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             }
         });
 
-        btnActive.setBackground(new java.awt.Color(204, 204, 204));
-        btnActive.setText("Update");
-        btnActive.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnActive.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActiveActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout LeftPanelLayout = new javax.swing.GroupLayout(LeftPanel);
         LeftPanel.setLayout(LeftPanelLayout);
         LeftPanelLayout.setHorizontalGroup(
             LeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(LeftPanelLayout.createSequentialGroup()
                 .addGroup(LeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LeftPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(LeftPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(LeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(LeftPanelLayout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(lblSearch)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(LeftPanelLayout.createSequentialGroup()
-                                .addGap(41, 41, 41)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnActive, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(LeftPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)))
+                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 162, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         LeftPanelLayout.setVerticalGroup(
@@ -393,9 +366,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(LeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEdit)
-                    .addComponent(btnDelete)
-                    .addComponent(btnActive)
-                    .addComponent(btnAdd))
+                    .addComponent(btnDelete))
                 .addGap(45, 45, 45))
         );
 
@@ -442,21 +413,18 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnAddOrg.setBackground(new java.awt.Color(204, 204, 204));
         btnAddOrg.setText("Add");
         btnAddOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAddOrg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddOrgActionPerformed(evt);
+            }
+        });
 
         lblSearchOrg.setFont(new java.awt.Font("맑은 고딕", 0, 14)); // NOI18N
         lblSearchOrg.setText("Search:");
 
-        btnEditOrg.setBackground(new java.awt.Color(204, 204, 204));
-        btnEditOrg.setText("Edit");
-        btnEditOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         btnDeleteOrg.setBackground(new java.awt.Color(204, 204, 204));
         btnDeleteOrg.setText("Delete");
         btnDeleteOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        btnUpdateOrg.setBackground(new java.awt.Color(204, 204, 204));
-        btnUpdateOrg.setText("Update");
-        btnUpdateOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         javax.swing.GroupLayout OrgLeftPanelLayout = new javax.swing.GroupLayout(OrgLeftPanel);
         OrgLeftPanel.setLayout(OrgLeftPanelLayout);
@@ -466,7 +434,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(OrgLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(OrgLeftPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane2))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(OrgLeftPanelLayout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(lblSearchOrg)
@@ -474,18 +442,13 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                         .addComponent(txtSearchOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnSearchOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(OrgLeftPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAddOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDeleteOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(OrgLeftPanelLayout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(btnEditOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnDeleteOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnUpdateOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAddOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         OrgLeftPanelLayout.setVerticalGroup(
             OrgLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -498,10 +461,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(OrgLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEditOrg)
+                .addGroup(OrgLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnDeleteOrg)
-                    .addComponent(btnUpdateOrg)
                     .addComponent(btnAddOrg))
                 .addContainerGap(81, Short.MAX_VALUE))
         );
@@ -517,20 +478,20 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
         lblStatus.setText("Status:");
 
-        btnSaveorg.setBackground(new java.awt.Color(204, 204, 204));
-        btnSaveorg.setText("Save");
-        btnSaveorg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnSaveorg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveorgActionPerformed(evt);
-            }
-        });
-
         btnClearOrg.setBackground(new java.awt.Color(204, 204, 204));
         btnClearOrg.setText("Clear");
         btnClearOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Active", "Deactive", " " }));
+
+        btnUpdateOrg.setBackground(new java.awt.Color(204, 204, 204));
+        btnUpdateOrg.setText("Update");
+        btnUpdateOrg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnUpdateOrg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateOrgActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout OrgRightPanelLayout = new javax.swing.GroupLayout(OrgRightPanel);
         OrgRightPanel.setLayout(OrgRightPanelLayout);
@@ -551,10 +512,10 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                             .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(OrgRightPanelLayout.createSequentialGroup()
                         .addGap(38, 38, 38)
-                        .addComponent(btnSaveorg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUpdateOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnClearOrg, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
         OrgRightPanelLayout.setVerticalGroup(
             OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -572,9 +533,9 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(lblStatus)
                     .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
-                .addGroup(OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSaveorg)
-                    .addComponent(btnClearOrg))
+                .addGroup(OrgRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClearOrg)
+                    .addComponent(btnUpdateOrg))
                 .addContainerGap(240, Short.MAX_VALUE))
         );
 
@@ -588,7 +549,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         EnterpriseTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         EnterpriseTab.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
 
-        EnterLeftPanel.setBackground(new java.awt.Color(204, 204, 204));
+        EnterLeftPanel.setBackground(new java.awt.Color(255, 255, 255));
         EnterLeftPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         EnterLeftPanel.setPreferredSize(new java.awt.Dimension(550, 450));
 
@@ -624,22 +585,18 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnEnterSearch.setText("Search");
         btnEnterSearch.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnEnterEdit.setBackground(new java.awt.Color(204, 204, 204));
-        btnEnterEdit.setText("Edit");
-        btnEnterEdit.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnEnterEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnterEditActionPerformed(evt);
-            }
-        });
-
         btnEnterDelete.setBackground(new java.awt.Color(204, 204, 204));
         btnEnterDelete.setText("Delete");
         btnEnterDelete.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnEnterUpdate.setBackground(new java.awt.Color(204, 204, 204));
-        btnEnterUpdate.setText("Update");
-        btnEnterUpdate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAddOrg1.setBackground(new java.awt.Color(204, 204, 204));
+        btnAddOrg1.setText("Add");
+        btnAddOrg1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAddOrg1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddOrg1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout EnterLeftPanelLayout = new javax.swing.GroupLayout(EnterLeftPanel);
         EnterLeftPanel.setLayout(EnterLeftPanelLayout);
@@ -655,16 +612,13 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                         .addComponent(txtEnterSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnEnterSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EnterLeftPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnAddOrg1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEnterDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(EnterLeftPanelLayout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(btnEnterEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnEnterDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnEnterUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         EnterLeftPanelLayout.setVerticalGroup(
             EnterLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -676,17 +630,16 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(btnEnterSearch))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(EnterLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEnterEdit)
                     .addComponent(btnEnterDelete)
-                    .addComponent(btnEnterUpdate))
-                .addContainerGap(167, Short.MAX_VALUE))
+                    .addComponent(btnAddOrg1))
+                .addContainerGap(173, Short.MAX_VALUE))
         );
 
         jSplitPane3.setLeftComponent(EnterLeftPanel);
 
-        EnterRightPanel.setBackground(new java.awt.Color(204, 204, 204));
+        EnterRightPanel.setBackground(new java.awt.Color(255, 255, 255));
         EnterRightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Enterprise Details"));
         EnterRightPanel.setPreferredSize(new java.awt.Dimension(300, 450));
 
@@ -698,18 +651,18 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
         cmbEnterStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Active", "Deactive", " " }));
 
-        btnEnterSave.setBackground(new java.awt.Color(204, 204, 204));
-        btnEnterSave.setText("Save");
-        btnEnterSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        btnEnterSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnterSaveActionPerformed(evt);
-            }
-        });
-
         btnEnterClear.setBackground(new java.awt.Color(204, 204, 204));
         btnEnterClear.setText("Clear");
         btnEnterClear.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        btnEnterUpdate.setBackground(new java.awt.Color(204, 204, 204));
+        btnEnterUpdate.setText("Update");
+        btnEnterUpdate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnEnterUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnterUpdateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout EnterRightPanelLayout = new javax.swing.GroupLayout(EnterRightPanel);
         EnterRightPanel.setLayout(EnterRightPanelLayout);
@@ -731,8 +684,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                         .addGap(0, 152, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(EnterRightPanelLayout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(btnEnterSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(80, 80, 80)
+                .addComponent(btnEnterUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnEnterClear, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -754,8 +707,8 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(cmbEnterStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(EnterRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEnterSave)
-                    .addComponent(btnEnterClear))
+                    .addComponent(btnEnterClear)
+                    .addComponent(btnEnterUpdate))
                 .addContainerGap(218, Short.MAX_VALUE))
         );
 
@@ -817,22 +770,16 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
     private void registerEventHandlers() {
         btnSearch.addActionListener(evt -> populateUserTable(txtSearch.getText()));
-        btnAdd.addActionListener(evt -> {
-            selectedUserAccount = null;
-            clearUserForm();
-        });
         btnEdit.addActionListener(evt -> loadSelectedUser());
         btnDelete.addActionListener(evt -> deleteSelectedUser());
-        btnActive.addActionListener(evt -> toggleSelectedUserStatus());
         btnSave.addActionListener(evt -> saveUser());
         btnClear.addActionListener(evt -> clearUserForm());
 
         btnSearchOrg.addActionListener(evt -> populateOrganizationTable(txtSearchOrg.getText()));
         btnAddOrg.addActionListener(evt -> {
             selectedOrganization = null;
-            clearOrganizationForm();
+            saveOrganization();
         });
-        btnEditOrg.addActionListener(evt -> loadSelectedOrganization());
         btnDeleteOrg.addActionListener(evt -> deleteSelectedOrganization());
         btnUpdateOrg.addActionListener(evt -> toggleSelectedOrganizationStatus());
         btnClearOrg.addActionListener(evt -> clearOrganizationForm());
@@ -1014,6 +961,16 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         }
         selectedOrganization = displayedOrganizations.get(row);
         loadOrganizationIntoForm(selectedOrganization);
+    }
+
+    private void loadSelectedEnterprise() {
+        int row = tblEnterprise.getSelectedRow();
+        if (row < 0 || row >= displayedEnterprises.size()) {
+            showMessage("Select an enterprise to edit.");
+            return;
+        }
+        selectedEnterprise = displayedEnterprises.get(row);
+        loadEnterpriseIntoForm(selectedEnterprise);
     }
 
     private void loadUserIntoForm(UserAccount account) {
@@ -1419,21 +1376,10 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
     private void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
-    private void btnSaveorgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveorgActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveorgActionPerformed
-
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtSearchActionPerformed
-
-    private void btnEnterEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnEnterEditActionPerformed
-
-    private void btnEnterSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterSaveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnEnterSaveActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
@@ -1443,17 +1389,34 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnActiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActiveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnActiveActionPerformed
-
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddActionPerformed
-
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnUpdateOrgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateOrgActionPerformed
+        // TODO add your handling code here:
+        saveOrganization();
+    }//GEN-LAST:event_btnUpdateOrgActionPerformed
+
+    private void btnEnterUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterUpdateActionPerformed
+        // TODO add your handling code here:
+        saveEnterprise();
+    }//GEN-LAST:event_btnEnterUpdateActionPerformed
+
+    private void btnAddOrg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddOrg1ActionPerformed
+        // TODO add your handling code here:
+        selectedUserAccount = null;
+        clearUserForm();
+    }//GEN-LAST:event_btnAddOrg1ActionPerformed
+
+    private void btnAddOrgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddOrgActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddOrgActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1466,23 +1429,18 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane OrgTab;
     private javax.swing.JPanel RightPanel;
     private javax.swing.JTabbedPane UserTab;
-    private javax.swing.JButton btnActive;
-    private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddOrg;
+    private javax.swing.JButton btnAddOrg1;
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClearOrg;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDeleteOrg;
     private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnEditOrg;
     private javax.swing.JButton btnEnterClear;
     private javax.swing.JButton btnEnterDelete;
-    private javax.swing.JButton btnEnterEdit;
-    private javax.swing.JButton btnEnterSave;
     private javax.swing.JButton btnEnterSearch;
     private javax.swing.JButton btnEnterUpdate;
     private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnSaveorg;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSearchOrg;
     private javax.swing.JButton btnUpdateOrg;

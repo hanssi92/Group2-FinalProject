@@ -7,6 +7,7 @@ package UI;
 import Business.Role.RoleType;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
+import UI.WorkAreas.AdminWorkAreaJPanel;
 import UI.WorkAreas.ContentManagerWorkAreaJPanel;
 import UI.WorkAreas.DeveloperWorkAreaJPanel;
 import UI.WorkAreas.PartnerManagerWorkAreaJPanel;
@@ -15,6 +16,7 @@ import UI.WorkAreas.ProductionWorkAreaJPanel;
 import UI.WorkAreas.RetailWorkAreaJPanel;
 import UI.WorkAreas.SupplierWorkAreaJPanel;
 import UI.WorkAreas.SupportAgentWorkAreaJPanel;
+import UI.WorkAreas.WorkRequestManagementJPanel;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -248,7 +250,7 @@ public class LogIn extends javax.swing.JPanel {
             return;
         }
 
-        mainFrame.showPanel(createRoleDashboard(account));
+        mainFrame.showRoleDashboard(account, createWorkAreaPanel(account));
     }
 
         private RoleType findRoleTypeByDisplayName(String displayName) {
@@ -269,53 +271,29 @@ public class LogIn extends javax.swing.JPanel {
         txtUsername.requestFocusInWindow();
     }
 
-        private JPanel createRoleDashboard(UserAccount account) {
-        JPanel container = new JPanel(new BorderLayout());
-
-        String employeeName = account.getEmployee() != null
-                ? account.getEmployee().getName()
-                : account.getUsername();
-
-        JLabel titleLabel = new JLabel(
-                account.getRoleType().getDisplayName() + " Dashboard - Welcome, " + employeeName,
-                SwingConstants.CENTER
-        );
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 16, 20, 16));
-
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.addActionListener(evt -> mainFrame.showLoginScreen());
-
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
-        headerPanel.add(logoutButton, BorderLayout.EAST);
-
-        container.add(headerPanel, BorderLayout.NORTH);
-        container.add(createWorkAreaPanel(account.getRoleType()), BorderLayout.CENTER);
-        return container;
-    }
-
-        private JPanel createWorkAreaPanel(RoleType roleType) {
+        private JPanel createWorkAreaPanel(UserAccount account) {
+        RoleType roleType = account.getRoleType();
         switch (roleType) {
+            case SYSTEM_ADMIN:
+                return new AdminWorkAreaJPanel(ecosystem);
             case CONTENT_MANAGER:
-                return new ContentManagerWorkAreaJPanel();
+                return new ContentManagerWorkAreaJPanel(ecosystem, account);
             case PLAYER_OR_USER:
-                return new PlayerWorkAreaJPanel();
+                return new PlayerWorkAreaJPanel(ecosystem, account);
             case GAME_DEVELOPER:
-                return new DeveloperWorkAreaJPanel();
+                return new DeveloperWorkAreaJPanel(ecosystem, account);
             case SUPPLIER_MANAGER:
-                return new SupplierWorkAreaJPanel();
+                return new SupplierWorkAreaJPanel(ecosystem, account);
             case PRODUCTION_MANAGER:
-                return new ProductionWorkAreaJPanel();
+                return new ProductionWorkAreaJPanel(ecosystem, account);
             case RETAIL_MANAGER:
-                return new RetailWorkAreaJPanel();
+                return new RetailWorkAreaJPanel(ecosystem, account);
             case SUPPORT_AGENT:
-                return new SupportAgentWorkAreaJPanel();
+                return new SupportAgentWorkAreaJPanel(ecosystem, account);
             case PARTNER_MANAGER:
-                return new PartnerManagerWorkAreaJPanel();
+                return new PartnerManagerWorkAreaJPanel(ecosystem, account);
             default:
-                JPanel panel = new JPanel(new BorderLayout());
-                panel.add(new JLabel("No work area available for this role.", SwingConstants.CENTER), BorderLayout.CENTER);
-                return panel;
+                return new WorkRequestManagementJPanel(ecosystem);
         }
     }
 }

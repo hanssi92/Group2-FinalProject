@@ -4,6 +4,7 @@
  */
 package UI.WorkAreas;
 
+import Business.WorkSpace.WorkRequestFormData;
 import Business.DataGenerator;
 import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
@@ -67,7 +68,6 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnUpdate1 = new javax.swing.JButton();
-        btnLogout = new javax.swing.JButton();
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         lblId = new javax.swing.JLabel();
@@ -95,7 +95,7 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        StatusPanel.setBackground(new java.awt.Color(204, 204, 204));
+        StatusPanel.setBackground(new java.awt.Color(255, 255, 255));
         StatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
 
         lblCompleted.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
@@ -231,7 +231,7 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         MyProfileTab.setFocusable(false);
         MyProfileTab.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnSave.setBackground(new java.awt.Color(204, 204, 204));
@@ -241,10 +241,6 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate1.setBackground(new java.awt.Color(204, 204, 204));
         btnUpdate1.setText("Update");
         btnUpdate1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        btnLogout.setBackground(new java.awt.Color(204, 204, 204));
-        btnLogout.setText("Log out");
-        btnLogout.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         lblName.setText("Name:");
 
@@ -267,12 +263,10 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(229, 229, 229)
+                        .addGap(300, 300, 300)
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnUpdate1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(266, 266, 266)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,7 +291,7 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
                                     .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addContainerGap(268, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,12 +324,11 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPhone)
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
                     .addComponent(btnUpdate1)
-                    .addComponent(btnLogout))
-                .addContainerGap(103, Short.MAX_VALUE))
+                    .addComponent(btnSave))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         MyProfileTab.addTab("My Information", jPanel2);
@@ -377,7 +370,6 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         btnUpdate.addActionListener(evt -> updateSelectedDeveloperRequest());
         btnUpdate1.addActionListener(evt -> enableProfileEditing());
         btnSave.addActionListener(evt -> saveProfileChanges());
-        btnLogout.addActionListener(evt -> logoutToLogin());
     }
 
     private void populateMyProfileTab() {
@@ -391,7 +383,7 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtId.setText(employee != null ? String.valueOf(employee.getEmployeeId()) : "");
+        txtId.setText(formatEmployeeId(employee));
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -438,15 +430,22 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         }
     }
 
+    private String formatEmployeeId(Employee employee) {
+        if (employee == null || account == null || account.getRoleType() == null) {
+            return "";
+        }
+        return account.getRoleType().getEmployeeCodePrefix()
+                + "-"
+                + String.format("%03d", employee.getEmployeeId());
+    }
+
     private void populateDeveloperRequests() {
         DefaultTableModel model = (DefaultTableModel) tblRequest.getModel();
         model.setRowCount(0);
         model.addRow(new Object[]{"WR-1001", "Gameplay Balancing Notes", "Interactive Entertainment", "Pending", "High", "2026-04-18"});
         model.addRow(new Object[]{"WR-1002", "Publish Patch Summary", "Content Manager", "In Review", "Medium", "2026-04-15"});
         model.addRow(new Object[]{"WR-1003", "Trailer Asset Approval", "Interactive Entertainment", "Completed", "Low", "2026-04-10"});
-        lblActivityProject.setText("Active Project: 2");
-        lblPendingRequest.setText("Pending Requests: 1");
-        lblCompleted.setText("Completed: 1");
+        refreshDeveloperStats();
     }
 
     private void updateSelectedDeveloperRequest() {
@@ -456,8 +455,7 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
         tblRequest.setValueAt("Completed", selectedRow, 3);
-        lblPendingRequest.setText("Pending Requests: 0");
-        lblCompleted.setText("Completed: 2");
+        refreshDeveloperStats();
     }
 
     private void openCreateRequestForm() {
@@ -561,7 +559,6 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane MyProfileTab;
     private javax.swing.JPanel StatusPanel;
     private javax.swing.JTabbedPane WorkRequestTab;
-    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnNewRequest;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;

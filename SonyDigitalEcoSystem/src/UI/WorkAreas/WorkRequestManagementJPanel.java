@@ -68,7 +68,7 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(204, 204, 204));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        StatusPanel.setBackground(new java.awt.Color(204, 204, 204));
+        StatusPanel.setBackground(new java.awt.Color(255, 255, 255));
         StatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "All Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 12))); // NOI18N
         StatusPanel.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
 
@@ -119,7 +119,7 @@ public class WorkRequestManagementJPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        ApprovalPanel.setBackground(new java.awt.Color(204, 204, 204));
+        ApprovalPanel.setBackground(new java.awt.Color(255, 255, 255));
         ApprovalPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Active Work Requests", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("맑은 고딕", 1, 14))); // NOI18N
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());

@@ -85,7 +85,7 @@
             <Container class="javax.swing.JPanel" name="jPanel2">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="cc" green="cc" red="cc" type="rgb"/>
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -357,46 +357,47 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="229" max="-2" attributes="0"/>
-                          <Component id="btnSave" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnUpdate1" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnLogout" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace pref="243" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace pref="268" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lblRole" min="-2" pref="72" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="txtRole" min="-2" pref="152" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="lblId" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblName" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="lblRole" min="-2" pref="72" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="txtRole" min="-2" pref="152" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="lblOrganization" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblEnterprise" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
-                                      <Component id="lblEmail" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
-                                      <Component id="lblPhone" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                                  <Component id="lblId" alignment="0" max="32767" attributes="0"/>
+                                                  <Component id="lblName" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="lblOrganization" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="lblEnterprise" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                              <Component id="lblEmail" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                              <Component id="lblPhone" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="txtId" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                              <Component id="txtName" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                              <Component id="txtEnterprise" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                              <Component id="txtOrganization" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                              <Component id="txtPhone" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                              <Component id="txtEmail" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
                                   </Group>
+                                  <EmptySpace min="-2" pref="262" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="btnSave" min="-2" pref="88" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtId" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                      <Component id="txtName" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                      <Component id="txtEnterprise" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                      <Component id="txtOrganization" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                      <Component id="txtPhone" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                      <Component id="txtEmail" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="btnUpdate1" min="-2" pref="88" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="280" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="-2" pref="262" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -438,13 +439,12 @@
                               <Component id="lblPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnSave" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnUpdate1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnLogout" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="96" max="32767" attributes="0"/>
+                          <EmptySpace pref="100" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -469,19 +469,6 @@
                       <Color blue="cc" green="cc" red="cc" type="rgb"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Update"/>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
-                        <BevelBorder/>
-                      </Border>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnLogout">
-                  <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Log out"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                         <BevelBorder/>
