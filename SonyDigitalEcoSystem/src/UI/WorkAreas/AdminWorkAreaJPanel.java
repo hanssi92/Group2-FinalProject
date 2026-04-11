@@ -172,12 +172,6 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
         lblEnterprise.setText("Status:");
 
-        cmbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cmbOragnization.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cmbEnterprise.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         btnSave.setBackground(new java.awt.Color(204, 204, 204));
         btnSave.setText("Save");
         btnSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -776,17 +770,14 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         btnClear.addActionListener(evt -> clearUserForm());
 
         btnSearchOrg.addActionListener(evt -> populateOrganizationTable(txtSearchOrg.getText()));
-        btnAddOrg.addActionListener(evt -> {
-            selectedOrganization = null;
-            saveOrganization();
-        });
+        btnAddOrg.addActionListener(evt -> createOrganization());
         btnDeleteOrg.addActionListener(evt -> deleteSelectedOrganization());
-        btnUpdateOrg.addActionListener(evt -> toggleSelectedOrganizationStatus());
+        btnUpdateOrg.addActionListener(evt -> updateOrganization());
         btnClearOrg.addActionListener(evt -> clearOrganizationForm());
 
         btnEnterSearch.addActionListener(evt -> populateEnterpriseTable(txtEnterSearch.getText()));
         btnEnterDelete.addActionListener(evt -> deleteSelectedEnterprise());
-        btnEnterUpdate.addActionListener(evt -> toggleSelectedEnterpriseStatus());
+        btnEnterUpdate.addActionListener(evt -> updateEnterprise());
         btnEnterClear.addActionListener(evt -> clearEnterpriseForm());
 
         cmbOragnization.addActionListener(evt -> populateRoleCombo(findOrganizationByName((String) cmbOragnization.getSelectedItem())));
@@ -1113,10 +1104,9 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         showMessage("User status updated.");
     }
 
-    private void saveOrganization() {
+    private void createOrganization() {
         String organizationName = txtName.getText().trim();
-        String enterpriseName = txtEnterpriseOrg.getText().trim();
-        Enterprise enterprise = ecosystem.findEnterpriseByName(enterpriseName);
+        Enterprise enterprise = findEnterpriseByInput(txtEnterpriseOrg.getText().trim());
         boolean active = "Active".equalsIgnoreCase((String) cmbStatus.getSelectedItem());
 
         if (organizationName.isEmpty() || enterprise == null) {
@@ -1124,24 +1114,55 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
 
-        if (selectedOrganization == null) {
-            OrganizationType organizationType = inferOrganizationType(enterprise, organizationName, null);
-            Organization organization = enterprise.getOrganizationDirectory().createAndAddOrganization(organizationName, organizationType);
-            organization.setActive(active);
-            ecosystem.addOrganization(organization);
-            selectedOrganization = organization;
-            showMessage("Organization created successfully.");
-        } else {
-            Enterprise currentEnterprise = ecosystem.findEnterpriseByOrganization(selectedOrganization);
-            if (currentEnterprise != null && currentEnterprise != enterprise) {
-                currentEnterprise.removeOrganization(selectedOrganization);
-                enterprise.addOrganization(selectedOrganization);
-            }
-            selectedOrganization.setName(organizationName);
-            selectedOrganization.setActive(active);
-            showMessage("Organization updated successfully.");
+        Organization existingOrganization = findOrganizationByName(organizationName);
+        if (existingOrganization != null) {
+            showMessage("Organization already exists. Please use Update instead.");
+            selectedOrganization = existingOrganization;
+            loadOrganizationIntoForm(existingOrganization);
+            return;
         }
 
+        OrganizationType organizationType = inferOrganizationType(enterprise, organizationName, null);
+        Organization organization = enterprise.getOrganizationDirectory().createAndAddOrganization(organizationName, organizationType);
+        organization.setActive(active);
+        ecosystem.addOrganization(organization);
+        selectedOrganization = organization;
+        refreshOrganizationViews();
+        showMessage("Organization created successfully.");
+    }
+
+    private void updateOrganization() {
+        if (selectedOrganization == null) {
+            selectedOrganization = findOrganizationByName(txtName.getText().trim());
+        }
+
+        if (selectedOrganization == null) {
+            showMessage("Select an organization to update.");
+            return;
+        }
+
+        String organizationName = txtName.getText().trim();
+        Enterprise enterprise = findEnterpriseByInput(txtEnterpriseOrg.getText().trim());
+        boolean active = "Active".equalsIgnoreCase((String) cmbStatus.getSelectedItem());
+
+        if (organizationName.isEmpty() || enterprise == null) {
+            showMessage("Please enter an organization name and a valid enterprise name.");
+            return;
+        }
+
+        Enterprise currentEnterprise = ecosystem.findEnterpriseByOrganization(selectedOrganization);
+        if (currentEnterprise != null && currentEnterprise != enterprise) {
+            currentEnterprise.removeOrganization(selectedOrganization);
+            enterprise.addOrganization(selectedOrganization);
+        }
+        selectedOrganization.setName(organizationName);
+        selectedOrganization.setActive(active);
+
+        refreshOrganizationViews();
+        showMessage("Organization updated successfully.");
+    }
+
+    private void refreshOrganizationViews() {
         populateOrganizationCombo();
         populateOrganizationTable(txtSearchOrg.getText());
         clearOrganizationForm();
@@ -1178,7 +1199,7 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         showMessage("Organization status updated.");
     }
 
-    private void saveEnterprise() {
+    private void createEnterpriseEntry() {
         String name = txtEnterName.getText().trim();
         EnterpriseType type = parseEnterpriseType(txtEnterType.getText().trim());
         boolean active = "Active".equalsIgnoreCase((String) cmbEnterStatus.getSelectedItem());
@@ -1188,19 +1209,52 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
 
-        if (selectedEnterprise == null) {
-            Enterprise enterprise = createEnterprise(name, type);
-            ecosystem.addEnterprise(enterprise);
-            enterprise.setActive(active);
-            selectedEnterprise = enterprise;
-            showMessage("Enterprise created successfully.");
-        } else {
-            selectedEnterprise.setName(name);
-            selectedEnterprise.setType(type);
-            selectedEnterprise.setActive(active);
-            showMessage("Enterprise updated successfully.");
+        Enterprise existingEnterprise = findEnterpriseByInput(name);
+        if (existingEnterprise != null) {
+            showMessage("Enterprise already exists. Please use Update instead.");
+            selectedEnterprise = existingEnterprise;
+            loadEnterpriseIntoForm(existingEnterprise);
+            return;
         }
 
+        Enterprise enterprise = createEnterprise(name, type);
+        ecosystem.addEnterprise(enterprise);
+        enterprise.setActive(active);
+        selectedEnterprise = enterprise;
+        refreshEnterpriseViews();
+        showMessage("Enterprise created successfully.");
+    }
+
+    private void updateEnterprise() {
+        if (selectedEnterprise == null) {
+            selectedEnterprise = findEnterpriseByInput(txtEnterName.getText().trim());
+        }
+
+        if (selectedEnterprise == null) {
+            showMessage("Select an enterprise to update.");
+            return;
+        }
+
+        String name = txtEnterName.getText().trim();
+        EnterpriseType type = parseEnterpriseType(txtEnterType.getText().trim());
+        boolean active = "Active".equalsIgnoreCase((String) cmbEnterStatus.getSelectedItem());
+
+        if (name.isEmpty() || type == null) {
+            showMessage("Please enter a valid enterprise name and enterprise type.");
+            return;
+        }
+
+        selectedEnterprise.setName(name);
+        selectedEnterprise.setType(type);
+        selectedEnterprise.setActive(active);
+
+        refreshEnterpriseViews();
+        showMessage("Enterprise updated successfully.");
+    }
+
+    private void refreshEnterpriseViews() {
+        populateOrganizationCombo();
+        populateOrganizationTable(txtSearchOrg.getText());
         populateEnterpriseTable(txtEnterSearch.getText());
         clearEnterpriseForm();
     }
@@ -1304,6 +1358,25 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         return null;
     }
 
+    private Enterprise findEnterpriseByInput(String value) {
+        String normalized = normalize(value);
+        if (normalized.isEmpty()) {
+            return null;
+        }
+
+        for (Enterprise enterprise : ecosystem.getEnterpriseList()) {
+            String enterpriseName = normalize(enterprise.getName());
+            String enterpriseType = normalize(enterprise.getType().getDisplayName());
+            if (enterpriseName.equals(normalized)
+                    || enterpriseType.equals(normalized)
+                    || enterpriseName.contains(normalized)
+                    || normalized.contains(enterpriseName)) {
+                return enterprise;
+            }
+        }
+        return null;
+    }
+
     private EnterpriseType parseEnterpriseType(String value) {
         if (value == null || value.trim().isEmpty()) {
             return null;
@@ -1400,12 +1473,21 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
 
     private void btnUpdateOrgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateOrgActionPerformed
         // TODO add your handling code here:
-        saveOrganization();
+        if (selectedOrganization == null) {
+            createOrganization();
+        } else {
+            updateOrganization();
+        }
     }//GEN-LAST:event_btnUpdateOrgActionPerformed
 
     private void btnEnterUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterUpdateActionPerformed
         // TODO add your handling code here:
-        saveEnterprise();
+        if (selectedEnterprise == null) {
+            createEnterpriseEntry();
+        } else {
+            updateEnterprise();
+        }
+
     }//GEN-LAST:event_btnEnterUpdateActionPerformed
 
     private void btnAddOrg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddOrg1ActionPerformed

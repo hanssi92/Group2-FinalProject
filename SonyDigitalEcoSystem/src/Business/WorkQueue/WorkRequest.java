@@ -19,6 +19,11 @@ public class WorkRequest {
     private String message;
     private WorkRequestStatus status;
     private Date requestDate;
+    private String requestId;
+    private String priority;
+    private String dueDate;
+    private String assignedTo;
+    private String requestType;
 
     public WorkRequest() {
         this.status = WorkRequestStatus.NEW;
@@ -67,5 +72,45 @@ public class WorkRequest {
 
     public Date getRequestDate() {
         return requestDate;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
     }
 }

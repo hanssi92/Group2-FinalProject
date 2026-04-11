@@ -10,6 +10,7 @@ import Business.Enterprise.Enterprise;
 import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
+import Business.WorkQueue.WorkRequest;
 import UI.MainFrame;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -64,6 +65,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         btnRequest = new javax.swing.JButton();
         btnConfirm = new javax.swing.JButton();
         btnCreate = new javax.swing.JButton();
+        btnRequestDash = new javax.swing.JButton();
         ProfileTab = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         lblName = new javax.swing.JLabel();
@@ -155,19 +157,25 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         btnCreate.setText("View Details");
         btnCreate.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        btnRequestDash.setBackground(new java.awt.Color(204, 204, 204));
+        btnRequestDash.setText("Request Dashboard");
+        btnRequestDash.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(lblRequestStatistic, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
             .addComponent(ApprovalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(71, 71, 71)
+                .addComponent(btnRequestDash, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -181,13 +189,14 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRequest)
                     .addComponent(btnConfirm)
-                    .addComponent(btnCreate))
+                    .addComponent(btnCreate)
+                    .addComponent(btnRequestDash))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
         TicketTab.addTab("Enterprise: Partner and Service | Org: Online Service Provider | Role: Support Agent", jPanel1);
 
-        jTabbedPane1.addTab("All Open Tickets", TicketTab);
+        jTabbedPane1.addTab("Support Request", TicketTab);
 
         ProfileTab.setBackground(new java.awt.Color(204, 204, 204));
         ProfileTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -321,6 +330,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         btnCreate.addActionListener(evt -> showSelectedTableDetails(tblSupport, "Ticket Details"));
         btnRequest.addActionListener(evt -> assignSelectedTicket());
         btnConfirm.addActionListener(evt -> resolveSelectedTicket());
+        btnRequestDash.addActionListener(evt -> openRequestDashboard());
         populateMyProfileTab();
         makeProfileReadOnly();
         btnUpdate.addActionListener(evt -> enableProfileEditing());
@@ -330,9 +340,51 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
     private void populateTickets() {
         DefaultTableModel model = (DefaultTableModel) tblSupport.getModel();
         model.setRowCount(0);
-        model.addRow(new Object[]{"TK-5001", "John Player", "Login Issue", "High", "Open", "Unassigned", "2026-04-10"});
-        model.addRow(new Object[]{"TK-5002", "Amy Gamer", "Billing Error", "Medium", "Assigned", "Support Agent", "2026-04-09"});
-        model.addRow(new Object[]{"TK-5003", "Chris User", "Connection Problem", "Low", "Resolved", "Support Agent", "2026-04-08"});
+        Organization currentOrganization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+
+        if (currentOrganization != null) {
+            for (WorkRequest workRequest : currentOrganization.getWorkQueue()) {
+                if (workRequest.getReceiverOrganization() != currentOrganization) {
+                    continue;
+                }
+
+                String requestId = workRequest.getRequestId() != null && !workRequest.getRequestId().isBlank()
+                        ? workRequest.getRequestId()
+                        : "TK-" + String.format("%04d", model.getRowCount() + 1);
+                String requester = workRequest.getSenderOrganization() != null
+                        ? workRequest.getSenderOrganization().getName()
+                        : "Unknown";
+                String issueCategory = workRequest.getTitle() != null ? workRequest.getTitle() : "";
+                String priority = workRequest.getPriority() != null && !workRequest.getPriority().isBlank()
+                        ? workRequest.getPriority()
+                        : "Medium";
+                String status = formatWorkRequestStatus(workRequest);
+                String assignedTo = workRequest.getAssignedTo() != null && !workRequest.getAssignedTo().isBlank()
+                        ? workRequest.getAssignedTo()
+                        : "Unassigned";
+                String createdDate = workRequest.getDueDate() != null && !workRequest.getDueDate().isBlank()
+                        ? workRequest.getDueDate()
+                        : java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE);
+
+                model.addRow(new Object[]{
+                    requestId,
+                    requester,
+                    issueCategory,
+                    priority,
+                    status,
+                    assignedTo,
+                    createdDate
+                });
+            }
+        }
+
+        if (model.getRowCount() == 0) {
+            model.addRow(new Object[]{"TK-5001", "John Player", "Login Issue", "High", "Open", "Unassigned", "2026-04-10"});
+            model.addRow(new Object[]{"TK-5002", "Amy Gamer", "Billing Error", "Medium", "Assigned", "Support Agent", "2026-04-09"});
+            model.addRow(new Object[]{"TK-5003", "Chris User", "Connection Problem", "Low", "Resolved", "Support Agent", "2026-04-08"});
+        }
+
+        refreshTicketStats();
     }
 
     private void populateMyProfileTab() {
@@ -394,6 +446,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         }
         tblSupport.setValueAt("Assigned", selectedRow, 4);
         tblSupport.setValueAt("Support Agent", selectedRow, 5);
+        refreshTicketStats();
     }
 
     private void resolveSelectedTicket() {
@@ -403,6 +456,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
         tblSupport.setValueAt("Resolved", selectedRow, 4);
+        refreshTicketStats();
     }
 
     private void logoutToLogin() {
@@ -410,6 +464,18 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         if (mainFrame != null) {
             mainFrame.showLoginScreen();
         }
+    }
+
+    private void openRequestDashboard() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+        mainFrame.showRoleDashboard(
+                account,
+                new WorkRequestManagementJPanel(mainFrame, ecosystem, account, this)
+        );
     }
 
     private MainFrame findMainFrame() {
@@ -427,6 +493,50 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
         return account.getRoleType().getEmployeeCodePrefix()
                 + "-"
                 + String.format("%03d", employee.getEmployeeId());
+    }
+
+    private void refreshTicketStats() {
+        int open = 0;
+        int assigned = 0;
+        int resolved = 0;
+
+        for (int row = 0; row < tblSupport.getRowCount(); row++) {
+            String status = String.valueOf(tblSupport.getValueAt(row, 4));
+            String assignedTo = String.valueOf(tblSupport.getValueAt(row, 5));
+            if ("Resolved".equalsIgnoreCase(status)) {
+                resolved++;
+            } else {
+                open++;
+            }
+            if (assignedTo != null && !assignedTo.isBlank() && !"Unassigned".equalsIgnoreCase(assignedTo)) {
+                assigned++;
+            }
+        }
+
+        lblRequestStatistic.setText("<html><b>Open Tickets:</b> " + open
+                + " &nbsp;&nbsp;&nbsp; <b>Assigned To Me:</b> " + assigned
+                + " &nbsp;&nbsp;&nbsp; <b>Resolved Today:</b> " + resolved + "</html>");
+    }
+
+    private String formatWorkRequestStatus(WorkRequest workRequest) {
+        if (workRequest == null || workRequest.getStatus() == null) {
+            return "Open";
+        }
+
+        String raw = workRequest.getStatus().name().toLowerCase().replace('_', ' ');
+        String[] parts = raw.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(part.charAt(0)))
+                    .append(part.substring(1));
+        }
+        return builder.toString();
     }
 
     private void showSelectedTableDetails(JTable table, String title) {
@@ -453,6 +563,7 @@ public class SupportAgentWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnConfirm;
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnRequest;
+    private javax.swing.JButton btnRequestDash;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JPanel jPanel1;

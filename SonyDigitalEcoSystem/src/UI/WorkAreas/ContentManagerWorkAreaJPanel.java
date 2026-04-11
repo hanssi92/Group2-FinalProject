@@ -11,6 +11,7 @@ import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
 import Business.WorkQueue.ContentPublishingRequest;
+import Business.WorkQueue.WorkRequest;
 import Business.WorkQueue.WorkRequestStatus;
 import UI.MainFrame;
 import java.awt.Component;
@@ -29,7 +30,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
     
     private final SonyEcoSystem ecosystem;
     private final UserAccount account;
-    private final ArrayList<ContentPublishingRequest> pendingRequests;
+    private final ArrayList<WorkRequest> displayedRequests;
     private final SimpleDateFormat dateFormat;
 
     /**
@@ -43,7 +44,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
     public ContentManagerWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
         this.ecosystem = ecosystem;
         this.account = account;
-        this.pendingRequests = new ArrayList<>();
+        this.displayedRequests = new ArrayList<>();
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         initComponents();
         initializeContentPanel();
@@ -351,9 +352,6 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         populateMyProfileTab();
         makeProfileReadOnly();
         populateContentRequests();
-        btnView.addActionListener(evt -> showSelectedRequestDetails());
-        btnApprove.addActionListener(evt -> updateSelectedRequestStatus(WorkRequestStatus.APPROVED));
-        btnReject.addActionListener(evt -> updateSelectedRequestStatus(WorkRequestStatus.REJECTED));
     }
 
     private void populateMyProfileTab() {
@@ -407,13 +405,6 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Profile updated successfully.");
     }
 
-    private void logoutToLogin() {
-        MainFrame mainFrame = findMainFrame();
-        if (mainFrame != null) {
-            mainFrame.showLoginScreen();
-        }
-    }
-
     private String formatEmployeeId(Employee employee) {
         if (employee == null || account == null || account.getRoleType() == null) {
             return "";
@@ -423,49 +414,53 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
                 + String.format("%03d", employee.getEmployeeId());
     }
 
-    private MainFrame findMainFrame() {
-        Component component = this;
-        while (component != null) {
-            if (component instanceof MainFrame) {
-                return (MainFrame) component;
-            }
-            component = SwingUtilities.getWindowAncestor(component);
-            if (component instanceof MainFrame) {
-                return (MainFrame) component;
-            }
-            component = component != null ? component.getParent() : null;
-        }
-        return null;
-    }
-
     private void populateContentRequests() {
         DefaultTableModel model = (DefaultTableModel) tblApprove.getModel();
         model.setRowCount(0);
-        pendingRequests.clear();
+        displayedRequests.clear();
+
+        Organization currentOrganization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        int approvedToday = 0;
+        int rejected = 0;
 
         if (ecosystem != null) {
-            for (ContentPublishingRequest request : ecosystem.getContentPublishingRequests()) {
+            for (WorkRequest request : ecosystem.getWorkRequests()) {
+                boolean isContentRequest = request instanceof ContentPublishingRequest;
+                boolean targetsCurrentOrganization = currentOrganization != null
+                        && request.getReceiverOrganization() == currentOrganization;
+
+                if (!isContentRequest && !targetsCurrentOrganization) {
+                    continue;
+                }
+
+                if (request.getStatus() == WorkRequestStatus.APPROVED && isToday(request.getRequestDate())) {
+                    approvedToday++;
+                } else if (request.getStatus() == WorkRequestStatus.REJECTED) {
+                    rejected++;
+                }
+
                 if (request.getStatus() != WorkRequestStatus.PENDING) {
                     continue;
                 }
-                pendingRequests.add(request);
+
+                displayedRequests.add(request);
                 model.addRow(new Object[]{
-                    request.getRequestId(),
-                    request.getTitle(),
-                    request.getSubmittedBy(),
-                    request.getContentType(),
-                    request.getPriority(),
+                    getRequestId(request, displayedRequests.size()),
+                    defaultValue(request.getTitle(), "(Untitled Request)"),
+                    getRequestFrom(request),
+                    getRequestType(request),
+                    getRequestPriority(request),
                     formatDate(request.getRequestDate())
                 });
             }
         }
 
         lblRequestStatistic.setText("<html><b>Pending Approval:</b> "
-                + (ecosystem != null ? ecosystem.getPendingContentApprovalCount() : 0)
+                + displayedRequests.size()
                 + " &nbsp;&nbsp;&nbsp; <b>Approved Today:</b> "
-                + (ecosystem != null ? ecosystem.getApprovedContentRequestsTodayCount() : 0)
+                + approvedToday
                 + " &nbsp;&nbsp;&nbsp; <b>Rejected:</b> "
-                + (ecosystem != null ? ecosystem.getRejectedContentRequestCount() : 0)
+                + rejected
                 + "</html>");
     }
 
@@ -475,7 +470,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Select a request first.");
             return;
         }
-        pendingRequests.get(selectedRow).setStatus(status);
+        displayedRequests.get(selectedRow).setStatus(status);
         populateContentRequests();
     }
 
@@ -486,16 +481,63 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
 
-        ContentPublishingRequest request = pendingRequests.get(selectedRow);
-        String details = "Request ID: " + request.getRequestId()
-                + "\nTitle: " + request.getTitle()
-                + "\nFrom: " + request.getSubmittedBy()
-                + "\nType: " + request.getContentType()
-                + "\nPriority: " + request.getPriority()
+        WorkRequest request = displayedRequests.get(selectedRow);
+        String details = "Request ID: " + getRequestId(request, selectedRow + 1)
+                + "\nTitle: " + defaultValue(request.getTitle(), "(Untitled Request)")
+                + "\nFrom: " + getRequestFrom(request)
+                + "\nType: " + getRequestType(request)
+                + "\nPriority: " + getRequestPriority(request)
                 + "\nSubmitted: " + formatDate(request.getRequestDate())
                 + "\nStatus: " + formatStatus(request.getStatus())
-                + "\nMessage: " + request.getMessage();
+                + "\nMessage: " + defaultValue(request.getMessage(), "");
         JOptionPane.showMessageDialog(this, details, "Request Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private boolean isToday(Date date) {
+        if (date == null) {
+            return false;
+        }
+        return dateFormat.format(date).startsWith(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+    }
+
+    private String getRequestId(WorkRequest request, int fallbackIndex) {
+        if (request instanceof ContentPublishingRequest) {
+            ContentPublishingRequest contentRequest = (ContentPublishingRequest) request;
+            return defaultValue(contentRequest.getRequestId(), "CP-" + String.format("%04d", fallbackIndex));
+        }
+        return defaultValue(request.getRequestId(), "CP-" + String.format("%04d", fallbackIndex));
+    }
+
+    private String getRequestFrom(WorkRequest request) {
+        if (request instanceof ContentPublishingRequest) {
+            ContentPublishingRequest contentRequest = (ContentPublishingRequest) request;
+            return defaultValue(contentRequest.getSubmittedBy(), getOrganizationName(request.getSenderOrganization()));
+        }
+        return getOrganizationName(request.getSenderOrganization());
+    }
+
+    private String getRequestType(WorkRequest request) {
+        if (request instanceof ContentPublishingRequest) {
+            ContentPublishingRequest contentRequest = (ContentPublishingRequest) request;
+            return defaultValue(contentRequest.getContentType(), "Content");
+        }
+        return defaultValue(request.getRequestType(), "General");
+    }
+
+    private String getRequestPriority(WorkRequest request) {
+        if (request instanceof ContentPublishingRequest) {
+            ContentPublishingRequest contentRequest = (ContentPublishingRequest) request;
+            return defaultValue(contentRequest.getPriority(), "Medium");
+        }
+        return defaultValue(request.getPriority(), "Medium");
+    }
+
+    private String getOrganizationName(Organization organization) {
+        return organization != null ? organization.getName() : "";
+    }
+
+    private String defaultValue(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
     }
 
     private String formatDate(Date date) {
@@ -522,14 +564,17 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
     }
     private void btnApproveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApproveActionPerformed
         // TODO add your handling code here:
+        updateSelectedRequestStatus(WorkRequestStatus.APPROVED);
     }//GEN-LAST:event_btnApproveActionPerformed
 
     private void btnRejectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRejectActionPerformed
         // TODO add your handling code here:
+        updateSelectedRequestStatus(WorkRequestStatus.REJECTED);
     }//GEN-LAST:event_btnRejectActionPerformed
 
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         // TODO add your handling code here:
+        showSelectedRequestDetails();
     }//GEN-LAST:event_btnViewActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -538,6 +583,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
 
     private void btnSave1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSave1ActionPerformed
         // TODO add your handling code here:
+        saveProfileChanges();
     }//GEN-LAST:event_btnSave1ActionPerformed
 
 
