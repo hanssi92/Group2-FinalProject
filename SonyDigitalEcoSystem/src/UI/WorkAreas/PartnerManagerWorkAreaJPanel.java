@@ -5,6 +5,7 @@
 package UI.WorkAreas;
 
 import Business.DataGenerator;
+import Business.Employee.Employee;
 import Business.Enterprise.Enterprise;
 import Business.Organization.Organization;
 import Business.SonyEcoSystem;
@@ -52,7 +53,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
+        PartnerRequestTab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         lblActivityPartner = new javax.swing.JLabel();
         lblPendingAssign = new javax.swing.JLabel();
@@ -64,7 +65,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
+        ProfileTab = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnUpdate1 = new javax.swing.JButton();
@@ -89,9 +90,9 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jTabbedPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTabbedPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jTabbedPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTabbedPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPane2.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
+        PartnerRequestTab.setBackground(new java.awt.Color(204, 204, 204));
+        PartnerRequestTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        PartnerRequestTab.setFont(new java.awt.Font("맑은 고딕", 1, 14)); // NOI18N
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -221,14 +222,14 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
                 .addContainerGap(99, Short.MAX_VALUE))
         );
 
-        jTabbedPane2.addTab("Enterprise: Partner and Service | Org: Online Service Provider | Role: Partner Manager", jPanel1);
+        PartnerRequestTab.addTab("Enterprise: Partner and Service | Org: Online Service Provider | Role: Partner Manager", jPanel1);
 
-        jTabbedPane1.addTab("Partner Request", jTabbedPane2);
+        jTabbedPane1.addTab("Partner Request", PartnerRequestTab);
 
-        jTabbedPane3.setBackground(new java.awt.Color(204, 204, 204));
-        jTabbedPane3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPane3.setFocusable(false);
-        jTabbedPane3.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
+        ProfileTab.setBackground(new java.awt.Color(204, 204, 204));
+        ProfileTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        ProfileTab.setFocusable(false);
+        ProfileTab.setFont(new java.awt.Font("맑은 고딕", 1, 12)); // NOI18N
 
         jPanel3.setBackground(new java.awt.Color(204, 204, 204));
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -336,9 +337,9 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
                 .addContainerGap(97, Short.MAX_VALUE))
         );
 
-        jTabbedPane3.addTab("My Information", jPanel3);
+        ProfileTab.addTab("My Information", jPanel3);
 
-        jTabbedPane1.addTab("My Profile", jTabbedPane3);
+        jTabbedPane1.addTab("My Profile", ProfileTab);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -366,6 +367,9 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jButton1.addActionListener(evt -> openCreateRequestForm());
         jButton2.addActionListener(evt -> updateSelectedPartnerStatus("Approved"));
         jButton3.addActionListener(evt -> updateSelectedPartnerStatus("Rejected"));
+        btnUpdate1.addActionListener(evt -> enableProfileEditing());
+        btnSave.addActionListener(evt -> saveProfileChanges());
+        btnLogout.addActionListener(evt -> logoutToLogin());
     }
 
     private void populateMyProfileTab() {
@@ -379,13 +383,13 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
-        txtStatus.setText(account != null && account.isActive() ? "Active" : "Inactive");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
             String organizationName = organization != null ? organization.getName() : "";
             String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
-            jTabbedPane2.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+            PartnerRequestTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
         }
     }
 
@@ -397,6 +401,33 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         txtEmail.setEditable(false);
         txtPhone.setEditable(false);
         txtId.setEditable(false);
+    }
+
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
+
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
+
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
+    }
+
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
     }
 
     private void populatePartnerRequests() {
@@ -416,7 +447,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Select a request first.");
             return;
         }
-        tblWorkRequest.setValueAt(status, selectedRow, 4);
+        jTable1.setValueAt(status, selectedRow, 4);
     }
 
     private void openCreateRequestForm() {
@@ -510,6 +541,8 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane PartnerRequestTab;
+    private javax.swing.JTabbedPane ProfileTab;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate1;
@@ -522,8 +555,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JLabel lblActivityPartner;
     private javax.swing.JLabel lblCrossRequest;
     private javax.swing.JLabel lblEmail;

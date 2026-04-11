@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 // private final is used to show that a field is only used inside the class and should not be reassigned after initialization
 public class DataGenerator {
-    
+
     private static final Object[][] SUPPLIER_INVENTORY = {
         {"Sensor Module", "Hardware Component", 180},
         {"Display Panel", "Hardware Component", 96},
