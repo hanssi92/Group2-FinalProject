@@ -10,6 +10,7 @@ import Business.Enterprise.Enterprise;
 import Business.Organization.Organization;
 import Business.SonyEcoSystem;
 import Business.UserAccount.UserAccount;
+import Business.WorkQueue.WorkRequest;
 import UI.MainFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -374,6 +375,9 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         makeProfileReadOnly();
         populateDeveloperRequests();
         btnUpdate.addActionListener(evt -> updateSelectedDeveloperRequest());
+        btnUpdate1.addActionListener(evt -> enableProfileEditing());
+        btnSave.addActionListener(evt -> saveProfileChanges());
+        btnLogout.addActionListener(evt -> logoutToLogin());
     }
 
     private void populateMyProfileTab() {
@@ -382,12 +386,12 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
 
         txtName.setText(employee != null ? employee.getName() : "");
-        txtId.setText(employee != null ? employee.getEmployeeId() : "");
         txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
         txtOrganization.setText(organization != null ? organization.getName() : "");
         txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
         txtEmail.setText(employee != null ? employee.getEmail() : "");
         txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(employee != null ? String.valueOf(employee.getEmployeeId()) : "");
 
         if (enterprise != null || organization != null || account != null) {
             String enterpriseName = enterprise != null ? enterprise.getName() : "";
@@ -405,6 +409,33 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
         txtEmail.setEditable(false);
         txtPhone.setEditable(false);
         txtId.setEditable(false);
+    }
+
+    private void enableProfileEditing() {
+        txtEmail.setEditable(true);
+        txtPhone.setEditable(true);
+        txtEmail.requestFocus();
+    }
+
+    private void saveProfileChanges() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Profile data is not available.");
+            return;
+        }
+
+        employee.setEmail(txtEmail.getText().trim());
+        employee.setPhone(txtPhone.getText().trim());
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        JOptionPane.showMessageDialog(this, "Profile updated successfully.");
+    }
+
+    private void logoutToLogin() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame != null) {
+            mainFrame.showLoginScreen();
+        }
     }
 
     private void populateDeveloperRequests() {
@@ -430,13 +461,13 @@ public class DeveloperWorkAreaJPanel extends javax.swing.JPanel {
     }
 
     private void openCreateRequestForm() {
-        CreateNewWorkRequest createNew = findMainFrame();
-        if (createNew == null) {
-            JOptionPane.showMessageDialog(this, "Creation is not available.");
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
             return;
         }
 
-        createNew.showPanel(new CreateNewWorkRequest(
+        mainFrame.showPanel(new CreateNewWorkRequest(
                 mainFrame,
                 ecosystem,
                 account,
