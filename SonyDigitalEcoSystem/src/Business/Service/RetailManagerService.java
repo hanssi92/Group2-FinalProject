@@ -40,7 +40,7 @@ public class RetailManagerService {
 
     
     public RetailRestockRequest requestRestock(String title, Organization senderOrganization, Organization receiverOrganization, String message) {
-        RetailRestockRequest request = new RetailRestockRequest();
+        RetailRestockRequest request = new RetailRestockRequest(title, senderOrganization, receiverOrganization, message);
         restockRequests.add(request);
         return request;
     }

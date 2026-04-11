@@ -4,18 +4,48 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import Business.WorkQueue.ContentPublishingRequest;
+import Business.WorkQueue.WorkRequestStatus;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
+    
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+    private final ArrayList<ContentPublishingRequest> pendingRequests;
+    private final SimpleDateFormat dateFormat;
 
     /**
      * Creates new form ContentManagerWorkAreaJPanel
      */
+    
     public ContentManagerWorkAreaJPanel() {
-        initComponents();
+        this(DataGenerator.createSeededEcosystem(), null);
     }
+
+    public ContentManagerWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
+        this.pendingRequests = new ArrayList<>();
+        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        initComponents();
+        initializeContentPanel();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,17 +69,17 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         MyProfileTab = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         lblName = new javax.swing.JLabel();
-        lblRole = new javax.swing.JLabel();
+        lblId = new javax.swing.JLabel();
         lblOrganization = new javax.swing.JLabel();
         lblEnterprise = new javax.swing.JLabel();
         lblEmail = new javax.swing.JLabel();
-        lblStatus = new javax.swing.JLabel();
+        lblRole = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
-        txtRole = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         txtOrganization = new javax.swing.JTextField();
         txtEnterprise = new javax.swing.JTextField();
         txtEmail = new javax.swing.JTextField();
-        txtStatus = new javax.swing.JTextField();
+        txtRole = new javax.swing.JTextField();
         lblPhone = new javax.swing.JLabel();
         txtPhone = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
@@ -117,14 +147,29 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         btnApprove.setBackground(new java.awt.Color(204, 204, 204));
         btnApprove.setText("Approve");
         btnApprove.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnApprove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApproveActionPerformed(evt);
+            }
+        });
 
         btnReject.setBackground(new java.awt.Color(204, 204, 204));
         btnReject.setText("Reject");
         btnReject.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnReject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRejectActionPerformed(evt);
+            }
+        });
 
         btnView.setBackground(new java.awt.Color(204, 204, 204));
         btnView.setText("View Details");
         btnView.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -173,7 +218,7 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
 
         lblName.setText("Name:");
 
-        lblRole.setText("Role:");
+        lblId.setText("Employee ID");
 
         lblOrganization.setText("Organization:");
 
@@ -181,13 +226,18 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
 
         lblEmail.setText("Email:");
 
-        lblStatus.setText("Status");
+        lblRole.setText("Role:");
 
         lblPhone.setText("Phone:");
 
         btnSave.setBackground(new java.awt.Color(204, 204, 204));
         btnSave.setText("Save");
         btnSave.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setBackground(new java.awt.Color(204, 204, 204));
         btnUpdate.setText("Update");
@@ -204,31 +254,36 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(248, 248, 248)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lblPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblOrganization, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRole, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEnterprise, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtName)
-                            .addComponent(txtRole)
-                            .addComponent(txtOrganization)
-                            .addComponent(txtEnterprise)
-                            .addComponent(txtEmail)
-                            .addComponent(txtStatus)
-                            .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(229, 229, 229)
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(248, 248, 248)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblRole, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(lblId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                                        .addComponent(lblName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(lblOrganization)
+                                    .addComponent(lblEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(245, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -240,34 +295,34 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblId)
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRole)
                     .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(21, 21, 21)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblOrganization)
                     .addComponent(txtOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEnterprise)
-                    .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEnterprise, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEnterprise))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblEmail)
                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPhone)
                     .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblStatus)
-                    .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnUpdate)
                     .addComponent(btnLogout))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
 
         MyProfileTab.addTab("My Information", jPanel2);
@@ -292,6 +347,144 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeContentPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populateContentRequests();
+        btnView.addActionListener(evt -> showSelectedRequestDetails());
+        btnApprove.addActionListener(evt -> updateSelectedRequestStatus(WorkRequestStatus.APPROVED));
+        btnReject.addActionListener(evt -> updateSelectedRequestStatus(WorkRequestStatus.REJECTED));
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtId.setText(account != null && account.getRoleType() != null
+                ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtRole.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            ApproveTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtId.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtRole.setEditable(false);
+    }
+
+    private void populateContentRequests() {
+        DefaultTableModel model = (DefaultTableModel) tblApprove.getModel();
+        model.setRowCount(0);
+        pendingRequests.clear();
+
+        if (ecosystem != null) {
+            for (ContentPublishingRequest request : ecosystem.getContentPublishingRequests()) {
+                if (request.getStatus() != WorkRequestStatus.PENDING) {
+                    continue;
+                }
+                pendingRequests.add(request);
+                model.addRow(new Object[]{
+                    request.getRequestId(),
+                    request.getTitle(),
+                    request.getSubmittedBy(),
+                    request.getContentType(),
+                    request.getPriority(),
+                    formatDate(request.getRequestDate())
+                });
+            }
+        }
+
+        lblRequestStatistic.setText("<html><b>Pending Approval:</b> "
+                + (ecosystem != null ? ecosystem.getPendingContentApprovalCount() : 0)
+                + " &nbsp;&nbsp;&nbsp; <b>Approved Today:</b> "
+                + (ecosystem != null ? ecosystem.getApprovedContentRequestsTodayCount() : 0)
+                + " &nbsp;&nbsp;&nbsp; <b>Rejected:</b> "
+                + (ecosystem != null ? ecosystem.getRejectedContentRequestCount() : 0)
+                + "</html>");
+    }
+
+    private void updateSelectedRequestStatus(WorkRequestStatus status) {
+        int selectedRow = tblApprove.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a request first.");
+            return;
+        }
+        pendingRequests.get(selectedRow).setStatus(status);
+        populateContentRequests();
+    }
+
+    private void showSelectedRequestDetails() {
+        int selectedRow = tblApprove.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a request first.");
+            return;
+        }
+
+        ContentPublishingRequest request = pendingRequests.get(selectedRow);
+        String details = "Request ID: " + request.getRequestId()
+                + "\nTitle: " + request.getTitle()
+                + "\nFrom: " + request.getSubmittedBy()
+                + "\nType: " + request.getContentType()
+                + "\nPriority: " + request.getPriority()
+                + "\nSubmitted: " + formatDate(request.getRequestDate())
+                + "\nStatus: " + formatStatus(request.getStatus())
+                + "\nMessage: " + request.getMessage();
+        JOptionPane.showMessageDialog(this, details, "Request Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private String formatDate(Date date) {
+        return date == null ? "" : dateFormat.format(date);
+    }
+
+    private String formatStatus(WorkRequestStatus status) {
+        if (status == null) {
+            return "";
+        }
+        String raw = status.name().toLowerCase().replace('_', ' ');
+        String[] parts = raw.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+        }
+        return builder.toString();
+    }
+    private void btnApproveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApproveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnApproveActionPerformed
+
+    private void btnRejectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRejectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRejectActionPerformed
+
+    private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnViewActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSaveActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ApprovalPanel;
@@ -309,19 +502,20 @@ public class ContentManagerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblEnterprise;
+    private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblOrganization;
     private javax.swing.JLabel lblPhone;
     private javax.swing.JLabel lblRequestStatistic;
     private javax.swing.JLabel lblRole;
-    private javax.swing.JLabel lblStatus;
     private javax.swing.JTable tblApprove;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEnterprise;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtOrganization;
     private javax.swing.JTextField txtPhone;
     private javax.swing.JTextField txtRole;
-    private javax.swing.JTextField txtStatus;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -51,5 +51,13 @@ public class EnterpriseDirectory {
     public boolean removeEnterprise(Enterprise enterprise) {
         return enterpriseList.remove(enterprise);
     }
-}
 
+    public Enterprise findEnterpriseByName(String enterpriseName) {
+        for (Enterprise enterprise : enterpriseList) {
+            if (enterprise.getName().equalsIgnoreCase(enterpriseName)) {
+                return enterprise;
+            }
+        }
+        return null;
+    }
+}

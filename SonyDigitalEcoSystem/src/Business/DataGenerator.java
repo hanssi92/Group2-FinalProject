@@ -15,6 +15,7 @@ import Business.Organization.OrganizationType;
 import Business.Role.RoleType;
 import Business.UserAccount.UserAccountDirectory;
 import Business.WorkQueue.ComponentSupplyRequest;
+import Business.WorkQueue.ContentPublishingRequest;
 import Business.WorkQueue.RetailRestockRequest;
 import Business.WorkQueue.WorkRequest;
 import Business.WorkQueue.WorkRequestStatus;
@@ -76,6 +77,14 @@ public class DataGenerator {
         {"Restock Console Units", "Core console inventory refill for flagship stores"}
     };
 
+    private static final Object[][] CONTENT_PUBLISHING_REQUESTS = {
+        {"100456", "PS5 Launch Trailer", "John Miller", "Video", "High", "Launch trailer assets prepared for homepage placement.", WorkRequestStatus.PENDING},
+        {"100457", "God of War Blog Post", "Emily Chen", "Article", "Medium", "Feature article draft for the next promotional push.", WorkRequestStatus.PENDING},
+        {"100458", "Spiderman Update Notes", "Alex Brown", "News", "High", "Patch note summary for the latest gameplay update.", WorkRequestStatus.PENDING},
+        {"100459", "Horizon Image Assets", "David Lee", "Image", "Medium", "Gallery image set ready for campaign review.", WorkRequestStatus.APPROVED},
+        {"100460", "Gran Turismo Social Ad", "Sarah Davis", "Social", "Low", "Social promotion asset prepared for publishing.", WorkRequestStatus.REJECTED}
+    };
+
     private static final Object[][] ROLE_ACCOUNT_SEEDS = {
         {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.CONTENT_MANAGER, "content", "content123", "Content Manager"},
         {OrganizationType.INTERACTIVE_ENTERTAINMENT, RoleType.PLAYER_OR_USER, "player", "player123", "Player User"},
@@ -115,6 +124,7 @@ public class DataGenerator {
     public static SonyEcoSystem createSeededEcosystem() {
         SonyEcoSystem ecosystem = SonyEcoSystem.createDefaultEcosystem();
         seedAllRoleAccounts(ecosystem);
+        seedContentPublishingRequests(ecosystem);
         seedEcosystemWorkRequestStatuses(ecosystem.getWorkRequests());
         return ecosystem;
     }
@@ -199,12 +209,43 @@ public class DataGenerator {
             }
 
             Employee employee = organization.getEmployeeDirectory().createEmployee((String) row[4]);
+            employee.setEmail(username + "@sony.com");
+            employee.setPhone("010-1000-10" + organization.getType().ordinal());
+            employee.setActive(true);
             userAccountDirectory.createUserAccount(
                     username,
                     (String) row[3],
                     employee,
                     (RoleType) row[1]
             );
+        }
+    }
+
+    private static void seedContentPublishingRequests(SonyEcoSystem ecosystem) {
+        Organization contentOrganization = findOrganization(ecosystem, OrganizationType.INTERACTIVE_ENTERTAINMENT);
+        Organization senderOrganization = findOrganization(ecosystem, OrganizationType.GAME_DEV_STUDIO);
+
+        if (contentOrganization == null) {
+            return;
+        }
+
+        for (Object[] row : CONTENT_PUBLISHING_REQUESTS) {
+            ContentPublishingRequest request = new ContentPublishingRequest(
+                    (String) row[1],
+                    senderOrganization != null ? senderOrganization : contentOrganization,
+                    contentOrganization,
+                    (String) row[5],
+                    "CP-" + row[0],
+                    (String) row[2],
+                    (String) row[3],
+                    (String) row[4]
+            );
+            request.setStatus((WorkRequestStatus) row[6]);
+            ecosystem.addWorkRequest(request);
+            contentOrganization.addWorkRequest(request);
+            if (senderOrganization != null && senderOrganization != contentOrganization) {
+                senderOrganization.addWorkRequest(request);
+            }
         }
     }
 

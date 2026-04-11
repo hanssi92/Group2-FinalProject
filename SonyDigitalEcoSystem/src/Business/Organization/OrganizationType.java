@@ -32,4 +32,3 @@ public enum OrganizationType {
         return displayName;
     }
 }
-

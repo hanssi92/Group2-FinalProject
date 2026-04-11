@@ -44,4 +44,17 @@ public class UserAccountDirectory {
         addUserAccount(userAccount);
         return userAccount;
     }
+
+    public boolean removeUserAccount(UserAccount userAccount) {
+        return userAccountList.remove(userAccount);
+    }
+
+    public UserAccount findUserAccountByUsername(String username) {
+        for (UserAccount userAccount : userAccountList) {
+            if (userAccount.getUsername().equalsIgnoreCase(username)) {
+                return userAccount;
+            }
+        }
+        return null;
+    }
 }

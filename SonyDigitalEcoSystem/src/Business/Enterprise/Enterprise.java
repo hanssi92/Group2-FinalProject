@@ -17,14 +17,16 @@ import java.util.ArrayList;
 //Note: used abstract because Enterprise and Organization are meant to be base templates, not direct objects.
 public abstract class Enterprise {
     
-    private final String name; 
-    private final EnterpriseType type;
+    private String name; 
+    private EnterpriseType type;
     private final OrganizationDirectory organizationDirectory;
+    private boolean active;
     
     protected Enterprise(String name, EnterpriseType type) {
         this.name = name;
         this.type = type;
         this.organizationDirectory = new OrganizationDirectory();
+        this.active = true;
     }
 
     public String getName() {
@@ -35,8 +37,24 @@ public abstract class Enterprise {
         return type;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(EnterpriseType type) {
+        this.type = type;
+    }
+
     public OrganizationDirectory getOrganizationDirectory() {
         return organizationDirectory;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
     
     public ArrayList<Organization> getOrganization() {
@@ -69,5 +87,10 @@ public abstract class Enterprise {
 
     public String getSummary() {
         return name + " (" + type + ") - organizations: " + organizationDirectory.getOrganizationList().size();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
