@@ -4,18 +4,43 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import Business.WorkQueue.WorkRequest;
+import UI.MainFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
+    
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+
 
     /**
      * Creates new form PartnerManagerWorkAreaJPanel
      */
+    
     public PartnerManagerWorkAreaJPanel() {
-        initComponents();
+        this(DataGenerator.createSeededEcosystem(), null);
     }
+
+    public PartnerManagerWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
+        initComponents();
+        initializePartnerPanel();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,7 +59,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         lblCrossRequest = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblWorkRequest = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -94,9 +119,9 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane1.setToolTipText("");
 
-        jTable1.setBackground(new java.awt.Color(204, 204, 204));
-        jTable1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblWorkRequest.setBackground(new java.awt.Color(204, 204, 204));
+        tblWorkRequest.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        tblWorkRequest.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -115,7 +140,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblWorkRequest);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -333,6 +358,156 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializePartnerPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populatePartnerRequests();
+        jButton4.addActionListener(evt -> showSelectedTableDetails(tblWorkRequest, "Partner Request Details"));
+        jButton1.addActionListener(evt -> openCreateRequestForm());
+        jButton2.addActionListener(evt -> updateSelectedPartnerStatus("Approved"));
+        jButton3.addActionListener(evt -> updateSelectedPartnerStatus("Rejected"));
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtStatus.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            jTabbedPane2.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtId.setEditable(false);
+    }
+
+    private void populatePartnerRequests() {
+        DefaultTableModel model = (DefaultTableModel) tblWorkRequest.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"PR-1001", "API Access Request", "Sony Electronics", "Sony Digital Ecosystem", "Pending"});
+        model.addRow(new Object[]{"PR-1002", "Data Sharing Agreement", "Sony Pictures", "Sony Digital Ecosystem", "Approved"});
+        model.addRow(new Object[]{"PR-1003", "Cloud Services Integration", "Sony Interactive Entertainment", "Sony Digital Ecosystem", "In Review"});
+        lblActivityPartner.setText("Active Partners: 5");
+        lblPendingAssign.setText("Pending Agreements: 3");
+        lblCrossRequest.setText("Cross-Enterprise Requests: 7");
+    }
+
+    private void updateSelectedPartnerStatus(String status) {
+        int selectedRow = tblWorkRequest.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a request first.");
+            return;
+        }
+        tblWorkRequest.setValueAt(status, selectedRow, 4);
+    }
+
+    private void openCreateRequestForm() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+
+        mainFrame.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedPartnerRequest,
+                "Partnership Request",
+                "PR"
+        ));
+    }
+
+    private void handleCreatedPartnerRequest(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblWorkRequest.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            data.getSourceEnterprise(),
+            data.getTargetEnterprise(),
+            "Pending"
+        });
+
+        if (ecosystem != null) {
+            Organization senderOrganization = ecosystem.findOrganizationByUserAccount(account);
+            Enterprise targetEnterprise = ecosystem.findEnterpriseByName(data.getTargetEnterprise());
+            Organization targetOrganization = targetEnterprise != null
+                    ? targetEnterprise.findOrganizationByName(data.getTargetOrganization())
+                    : null;
+            WorkRequest workRequest = new WorkRequest(
+                    data.getShortDescription(),
+                    senderOrganization,
+                    targetOrganization,
+                    data.getDescription()
+            );
+            ecosystem.addWorkRequest(workRequest);
+            if (senderOrganization != null) {
+                senderOrganization.addWorkRequest(workRequest);
+            }
+            if (targetOrganization != null && targetOrganization != senderOrganization) {
+                targetOrganization.addWorkRequest(workRequest);
+            }
+        }
+
+        refreshPartnerStats();
+    }
+
+    private void refreshPartnerStats() {
+        int pending = 0;
+        for (int row = 0; row < tblWorkRequest.getRowCount(); row++) {
+            Object statusValue = tblWorkRequest.getValueAt(row, 4);
+            if (statusValue != null && "Pending".equalsIgnoreCase(statusValue.toString())) {
+                pending++;
+            }
+        }
+        lblActivityPartner.setText("Active Partners: " + tblWorkRequest.getRowCount());
+        lblPendingAssign.setText("Pending Agreements: " + pending);
+        lblCrossRequest.setText("Cross-Enterprise Requests: " + tblWorkRequest.getRowCount());
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogout;
@@ -349,7 +524,6 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblActivityPartner;
     private javax.swing.JLabel lblCrossRequest;
     private javax.swing.JLabel lblEmail;
@@ -360,6 +534,7 @@ public class PartnerManagerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblPendingAssign;
     private javax.swing.JLabel lblPhone;
     private javax.swing.JLabel lblRole;
+    private javax.swing.JTable tblWorkRequest;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEnterprise;
     private javax.swing.JTextField txtId;

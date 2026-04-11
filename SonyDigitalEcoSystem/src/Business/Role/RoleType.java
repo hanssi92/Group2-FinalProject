@@ -18,6 +18,7 @@ public enum RoleType {
     RETAIL_MANAGER("Retail Manager"),
     SUPPORT_AGENT("Support Agent"),
     PARTNER_MANAGER("Partner Manager");
+    SYSTEM_ADMIN("System Admin");
 
     private final String displayName;
 

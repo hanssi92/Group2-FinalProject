@@ -4,17 +4,42 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import UI.MainFrame;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class RetailWorkAreaJPanel extends javax.swing.JPanel {
+    
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
 
     /**
      * Creates new form RetailWorkAreaJPanel
      */
+    
     public RetailWorkAreaJPanel() {
+        this(DataGenerator.createSeededEcosystem(), null);
+    }
+
+    public RetailWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
         initComponents();
+        initializeRetailPanel();
     }
 
     /**
@@ -307,6 +332,151 @@ public class RetailWorkAreaJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initializeRetailPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populateSalesOrders();
+        btnView.addActionListener(evt -> showSelectedTableDetails(tblSales, "Sales Order Details"));
+        btnRequest.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Stock request form can be connected next."));
+        btnConfirm.addActionListener(evt -> confirmReceipt());
+        btnCreate.addActionListener(evt -> openCreateRequestForm());
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            SalesTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | Role: " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtId.setEditable(false);
+    }
+
+    private void populateSalesOrders() {
+        DefaultTableModel model = (DefaultTableModel) tblSales.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"SO-10043", "Sony WH-1000XM5", 25, "Partner and Service", "Processing", "2026-04-10", "2026-04-17"});
+        model.addRow(new Object[]{"SO-10042", "Sony Alpha A7 IV", 10, "Partner and Service", "Confirmed", "2026-04-09", "2026-04-16"});
+        model.addRow(new Object[]{"SO-10041", "Sony PS5 Console", 50, "Retailer Stock", "Delivered", "2026-04-08", "2026-04-13"});
+        model.addRow(new Object[]{"SO-10040", "Sony SRS-XG300", 15, "Partner and Service", "Backordered", "2026-04-07", "2026-04-20"});
+        lblRequestStatistic.setText("<html><b>Pending Orders:</b> 2 &nbsp;&nbsp;&nbsp; <b>Stock Alerts:</b> 3 &nbsp;&nbsp;&nbsp; <b>Sales This Week:</b> 42</html>");
+    }
+
+    private void confirmReceipt() {
+        int selectedRow = tblSales.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select an order first.");
+            return;
+        }
+        tblSales.setValueAt("Delivered", selectedRow, 4);
+    }
+
+    private void openCreateRequestForm() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+
+        mainFrame.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedSalesOrder,
+                "Sales Order",
+                "SO"
+        ));
+    }
+
+    private void handleCreatedSalesOrder(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblSales.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            1,
+            data.getTargetEnterprise() != null && !data.getTargetEnterprise().isBlank()
+                    ? data.getTargetEnterprise()
+                    : data.getSourceEnterprise(),
+            "Processing",
+            LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+            data.getDueDate()
+        });
+
+        if (ecosystem != null) {
+            ecosystem.getRestockRequestList().add(new Order(
+                    data.getRequestId(),
+                    data.getShortDescription(),
+                    1,
+                    data.getTargetEnterprise(),
+                    "Processing",
+                    LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                    data.getDueDate()
+            ));
+        }
+
+        refreshRetailStats();
+    }
+
+    private void refreshRetailStats() {
+        int pending = 0;
+        for (int row = 0; row < tblSales.getRowCount(); row++) {
+            Object statusValue = tblSales.getValueAt(row, 4);
+            String status = statusValue != null ? statusValue.toString() : "";
+            if (!"Delivered".equalsIgnoreCase(status) && !"Confirmed".equalsIgnoreCase(status)) {
+                pending++;
+            }
+        }
+        lblRequestStatistic.setText("<html><b>Pending Orders:</b> " + pending
+                + " &nbsp;&nbsp;&nbsp; <b>Stock Alerts:</b> 3 &nbsp;&nbsp;&nbsp; <b>Sales This Week:</b> "
+                + tblSales.getRowCount() + "</html>");
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ApprovalPanel;

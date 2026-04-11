@@ -4,17 +4,42 @@
  */
 package UI.WorkAreas;
 
+import Business.DataGenerator;
+import Business.Employee.Employee;
+import Business.Enterprise.Enterprise;
+import Business.Organization.Organization;
+import Business.SonyEcoSystem;
+import Business.UserAccount.UserAccount;
+import Business.WorkQueue.WorkRequest;
+import UI.MainFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sumayyahhusain
  */
 public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
+    
+    private final SonyEcoSystem ecosystem;
+    private final UserAccount account;
+
 
     /**
      * Creates new form PlayerWorkAreaJPanel
      */
+    
     public PlayerWorkAreaJPanel() {
+        this(DataGenerator.createSeededEcosystem(), null);
+    }
+
+    public PlayerWorkAreaJPanel(SonyEcoSystem ecosystem, UserAccount account) {
+        this.ecosystem = ecosystem;
+        this.account = account;
         initComponents();
+        initializePlayerPanel();
     }
 
     /**
@@ -31,7 +56,7 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblTicketList = new javax.swing.JTable();
         btnNew = new javax.swing.JButton();
         btnview = new javax.swing.JButton();
         ProfileTab = new javax.swing.JTabbedPane();
@@ -72,8 +97,8 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jTable1.setBackground(new java.awt.Color(204, 204, 204));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblTicketList.setBackground(new java.awt.Color(204, 204, 204));
+        tblTicketList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -92,7 +117,7 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblTicketList);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -289,6 +314,127 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNewActionPerformed
 
+    private void initializePlayerPanel() {
+        populateMyProfileTab();
+        makeProfileReadOnly();
+        populateTickets();
+        btnview.addActionListener(evt -> showSelectedTableDetails(tblTicketList, "Ticket Details"));
+        btnNew.addActionListener(evt -> openCreateRequestForm());
+    }
+
+    private void populateMyProfileTab() {
+        Employee employee = account != null ? account.getEmployee() : null;
+        Organization organization = ecosystem != null ? ecosystem.findOrganizationByUserAccount(account) : null;
+        Enterprise enterprise = ecosystem != null ? ecosystem.findEnterpriseByOrganization(organization) : null;
+
+        txtName.setText(employee != null ? employee.getName() : "");
+        txtRole.setText(account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "");
+        txtOrganization.setText(organization != null ? organization.getName() : "");
+        txtEnterprise.setText(enterprise != null ? enterprise.getName() : "");
+        txtEmail.setText(employee != null ? employee.getEmail() : "");
+        txtPhone.setText(employee != null ? employee.getPhone() : "");
+        txtId.setText(account != null && account.isActive() ? "Active" : "Inactive");
+
+        if (enterprise != null || organization != null || account != null) {
+            String enterpriseName = enterprise != null ? enterprise.getName() : "";
+            String organizationName = organization != null ? organization.getName() : "";
+            String roleName = account != null && account.getRoleType() != null ? account.getRoleType().getDisplayName() : "";
+            MyTicketTab.setTitleAt(0, "Enterprise: " + enterpriseName + " | Org: " + organizationName + " | " + roleName);
+        }
+    }
+
+    private void makeProfileReadOnly() {
+        txtName.setEditable(false);
+        txtRole.setEditable(false);
+        txtOrganization.setEditable(false);
+        txtEnterprise.setEditable(false);
+        txtEmail.setEditable(false);
+        txtPhone.setEditable(false);
+        txtId.setEditable(false);
+    }
+
+    private void populateTickets() {
+        DefaultTableModel model = (DefaultTableModel) tblTicketList.getModel();
+        model.setRowCount(0);
+        model.addRow(new Object[]{"TK-10045", "Login Issue", "Open", "High", "2026-04-10"});
+        model.addRow(new Object[]{"TK-10031", "Game Crash", "In Progress", "Medium", "2026-04-08"});
+        model.addRow(new Object[]{"TK-10018", "Billing Error", "Closed", "Low", "2026-04-03"});
+    }
+
+    private void showSelectedTableDetails(JTable table, String title) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Select a row first.");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            builder.append(table.getColumnName(column))
+                    .append(": ")
+                    .append(table.getValueAt(selectedRow, column))
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, builder.toString(), title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void openCreateRequestForm() {
+        MainFrame mainFrame = findMainFrame();
+        if (mainFrame == null) {
+            JOptionPane.showMessageDialog(this, "Main screen is not available.");
+            return;
+        }
+
+        mainFrame.showPanel(new CreateNewWorkRequest(
+                mainFrame,
+                ecosystem,
+                account,
+                this,
+                this::handleCreatedTicket,
+                "Support Ticket",
+                "TK"
+        ));
+    }
+
+    private void handleCreatedTicket(WorkRequestFormData data) {
+        DefaultTableModel model = (DefaultTableModel) tblTicketList.getModel();
+        model.addRow(new Object[]{
+            data.getRequestId(),
+            data.getShortDescription(),
+            "Open",
+            data.getPriority(),
+            java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
+        });
+
+        if (ecosystem != null) {
+            Organization senderOrganization = ecosystem.findOrganizationByUserAccount(account);
+            Enterprise targetEnterprise = ecosystem.findEnterpriseByName(data.getTargetEnterprise());
+            Organization targetOrganization = targetEnterprise != null
+                    ? targetEnterprise.findOrganizationByName(data.getTargetOrganization())
+                    : null;
+            WorkRequest workRequest = new WorkRequest(
+                    data.getShortDescription(),
+                    senderOrganization,
+                    targetOrganization,
+                    data.getDescription()
+            );
+            ecosystem.addWorkRequest(workRequest);
+            if (senderOrganization != null) {
+                senderOrganization.addWorkRequest(workRequest);
+            }
+            if (targetOrganization != null && targetOrganization != senderOrganization) {
+                targetOrganization.addWorkRequest(workRequest);
+            }
+        }
+    }
+
+    private MainFrame findMainFrame() {
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainFrame) {
+            return (MainFrame) window;
+        }
+        return null;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane MyTicketTab;
@@ -303,7 +449,6 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblEnterprise;
     private javax.swing.JLabel lblId;
@@ -311,6 +456,7 @@ public class PlayerWorkAreaJPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblOrganization;
     private javax.swing.JLabel lblPhone;
     private javax.swing.JLabel lblRole;
+    private javax.swing.JTable tblTicketList;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEnterprise;
     private javax.swing.JTextField txtId;
